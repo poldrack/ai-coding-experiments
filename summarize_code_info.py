@@ -97,7 +97,7 @@ if __name__ == '__main__':
     df = pd.DataFrame.from_dict(
         {'filename': list(file_info.keys())})
 
-    for vars in ['mean_cc', 'ntokens']:
+    for vars in ['mean_cc', 'ntokens', 'flake8']:
         df[vars] = [file_info[i][vars] if vars in file_info[i] else None for i in df.filename]
     
     file_info = fix_hal_metrics(file_info)

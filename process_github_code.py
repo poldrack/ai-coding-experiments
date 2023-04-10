@@ -12,6 +12,7 @@ import subprocess
 import json
 import tiktoken
 import argparse
+import subprocess
 
 
 tokenizer = tiktoken.get_encoding("cl100k_base")
@@ -52,6 +53,16 @@ def get_metrics(infile, metric):
         return result[infile.as_posix()]
     except:
         print(f'error running radon metric {metric} on ', infile)
+        return None
+
+
+def get_flake8(infile):
+    try:
+        output = subprocess.run(['flake8', infile], capture_output=True, text=True)
+        return len(output.stdout.strip().split("\n"))
+    except Exception as e:
+        print(f'error running flake8 on ', infile)
+        print(e)
         return None
 
 
@@ -110,6 +121,8 @@ if __name__ == '__main__':
 
         file_info[fname]['ntokens'] = getTokenLength(code)
 
+        file_info[fname]['flake8'] = get_flake8(infile)
+        
         # Compute metrics
         for metric in ['cc', 'hal', 'raw', 'mi']:
             file_info[fname][metric] = get_metrics(infile, metric)
