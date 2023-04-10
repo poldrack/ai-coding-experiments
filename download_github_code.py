@@ -34,8 +34,10 @@ def sleep(sleeptime=30):
     time.sleep(sleeptime)
 
 
-def download_file(file_url, file_path):
+def download_file(file_url, file_path, verbose=True):
     response = requests.get(file_url, headers=headers)
+    if verbose:
+        print(f"Downloading {file_path}")
     with open(file_path, 'wb') as file:
         file.write(response.content)
     return response.content
@@ -45,8 +47,9 @@ def get_recent_python_files(page_number, date=None):
     if date is None:
         datestr = ''
     else:
-        datestr = f"+created:{date}"
-    search_url = f"https://api.github.com/search/code?q=language:python+extension:py+in:path{datestr}&sort=indexed&order=desc&per_page=100&page={page_number}"
+        datestr = f"+pushed:>{date}"
+    search_url = f"https://api.github.com/search/code?q=language:python+extension:py+in:path{datestr}&sort=pushed&order=desc&per_page=100&page={page_number}"
+    print(search_url)
     response = requests.get(search_url, headers=headers)
     return response.json()
 
@@ -70,7 +73,19 @@ def clear_directory(directory):
             print(f"Error deleting file {file_path}: {e}")
 
 
-def codesearch(dates, codeinfo, licenses, unique_users):
+def get_commit_date(item):
+    owner = item['repository']['owner']['login']
+    repo = item['repository']['name']
+    commit_url = f"https://api.github.com/repos/{owner}/{repo}/commits?path={item['path']}"
+    commit_result = requests.get(commit_url, headers=headers)
+    sleep(10)
+    commit_info = commit_result.json()
+    if len(commit_info) == 0:
+        return None
+    return commit_info[0]['commit']['author']['date']
+
+
+def codesearch(dates, codeinfo, unique_users):
     for date in dates:
         print(f"Searching for files created on {date}...")
         for page_number in range(1, 9):
@@ -90,8 +105,6 @@ def codesearch(dates, codeinfo, licenses, unique_users):
                 if item['repository']['owner']['login'] not in unique_users:
                     tag = item['repository']['full_name'].replace('/', ':') + ':' + item['name']
                     license = get_license(item)
-                    licenses[tag] = license
-                    print(tag, license)
                     sleep()
                     unique_users.add(item['repository']['owner']['login'])
                     raw_url = item["html_url"].replace("https://github.com", "https://raw.githubusercontent.com").replace("/blob", "")
@@ -99,9 +112,17 @@ def codesearch(dates, codeinfo, licenses, unique_users):
                     if not os.path.exists(file_path):
                         _ = download_file(raw_url, file_path)
                         codeinfo[tag] = item
+                        codeinfo[tag]['commit'] = get_commit_date(item)
+                        codeinfo[tag]['license'] = license
+                        dump_files(codeinfo)
                     else:
                         print(f"File {file_path} already exists, skipping download")
                         continue
+
+
+def dump_files(codeinfo):
+    with open('codeinfo.json', 'w') as outfile:
+        json.dump(codeinfo, outfile)
 
 
 if __name__ == "__main__":
@@ -125,12 +146,6 @@ if __name__ == "__main__":
 
     dates = get_datelist()
 
-    if os.path.exists('licenses.json'):
-        with open('licenses.json', 'r') as infile:
-            licenses = json.load(infile)
-    else:
-        licenses = {}
-
     if os.path.exists('codeinfo.json'):
         with open('codeinfo.json', 'r') as infile:
             codeinfo = json.load(infile)
@@ -144,13 +159,8 @@ if __name__ == "__main__":
         unique_users = set()
 
     try:
-        codeinfo, licenses = codesearch(dates, codeinfo, licenses, unique_users)
+        codeinfo = codesearch(dates, codeinfo, unique_users)
     except: # bare except is appropriate here, catching any possible exception
         print("Error occurred, saving files")
 
-
-    with open('licenses.json', 'w') as outfile:
-        json.dump(licenses, outfile)
-
-    with open('codeinfo.json', 'w') as outfile:
-        json.dump(codeinfo, outfile)
+    dump_files(codeinfo)
