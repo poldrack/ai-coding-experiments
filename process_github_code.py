@@ -102,9 +102,15 @@ if __name__ == '__main__':
     infiles = codedir.glob('**/*.py')
     maxfiles = 1000000
     
+    if args.dataset == 'github':
+        with open('codeinfo.json', 'rb') as f:
+            codeinfo = json.load(f)
+    else:
+        codeinfo = {}
+
     file_info = {}
     for infile in infiles:
-        fname = infile.as_posix()
+        fname = infile.as_posix().split('/')[1]
         with open(infile, 'r') as f:
             try:
                 code= [i.strip() for i in f.readlines()]
@@ -113,11 +119,12 @@ if __name__ == '__main__':
                 file_info[fname] = None
                 continue
 
-
         file_info[fname] = get_file_info(infile, code)
         if file_info[fname] is None:
             print('error parsing', fname)
             continue
+
+        file_info[fname]['github'] = codeinfo[fname] if fname in codeinfo else None
 
         file_info[fname]['ntokens'] = getTokenLength(code)
 

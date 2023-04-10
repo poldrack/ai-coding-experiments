@@ -69,7 +69,8 @@ if __name__ == '__main__':
     vars_to_save = {
         'raw': ['loc', 'lloc', 'comments'],
         'mi': ['mi'],
-        'hal': ['bugs', 'difficulty', 'volume']
+        'hal': ['bugs', 'difficulty', 'volume'],
+        'github': ['commit', 'license']
     }
 
     # Read in the file info
