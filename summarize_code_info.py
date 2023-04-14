@@ -5,7 +5,9 @@ import pandas as pd
 import argparse
 
 
-def meets_requirements(dct, max_mean_line_length=100, max_max_line_length=1000, max_tokens=2500):
+def meets_requirements(dct, key, max_mean_line_length=100, 
+                       max_max_line_length=1000, max_tokens=2500,
+                       verbose=False):
     """
     from codex paper: We filtered out files which were likely auto-generated, had average line
     length greater than 100, had maximum line length greater
@@ -14,17 +16,43 @@ def meets_requirements(dct, max_mean_line_length=100, max_max_line_length=1000, 
     """
     # is it a Python file?
     if dct['guess'] != 'Python':
+        if verbose:
+            print(f'Not a Python file: {key}')
         return False
     
     # does it include non-English text?
     if dct['nonenglish'][0]:
+        if verbose:
+            print(f'Non-English text: {key}')
+        return False
+    
+    # is it auto-generated?
+    if dct['autogen']:
+        if verbose:
+            print(f'Auto-generated: {key}')
+        return False
+    
+    # is it obfuscated?
+    if dct['obfuscations'] > 1000:
+        if verbose:
+            print(f'Obfuscated: {key}')
+        return False
+    
+    # is file size too large?
+    if dct['filesize'] > 1000000:
+        if verbose:
+            print(f'File size too large: {key}')
         return False
     
     # do mean and max line lengths fit within limits?
     if dct['mean_max_ll'][0] > max_mean_line_length or dct['mean_max_ll'][1] > max_max_line_length:
+        if verbose:
+            print(f'Mean or max line length too large: {key}')
         return False
     
     if dct['ntokens'] > max_tokens:
+        if verbose:
+            print(f'Number of tokens too large: {key}')
         return False
 
     return True
@@ -59,7 +87,14 @@ def fix_hal_metrics(file_info):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--dataset', default='github', help='dataset label')
+    parser.add_argument('-d', '--dataset', default='github', 
+                        help='dataset label')
+    parser.add_argument('-v', '--verbose', action='store_true', 
+                        help='verbose output')
+    parser.add_argument('--no-filter', action='store_true', 
+                        help='do not filter out files that do not meet requirements')
+    parser.add_argument('--secondary-key',
+                        help='secondary key to use for file info (e.g., "gpt4")')
     return parser.parse_args()
 
 if __name__ == '__main__':
@@ -74,20 +109,35 @@ if __name__ == '__main__':
     }
 
     # Read in the file info
-    with open(f'file_info_{args.dataset}.json') as f:
+    with open(f'analysis_outputs/file_info_{args.dataset}.json') as f:
         file_info = json.load(f)
 
     original_length = len(file_info)
 
     # filter out the files that don't meet requirements
     orig_keys = list(file_info.keys())
-    for k in orig_keys:
-        if file_info[k] is None or not meets_requirements(file_info[k]):
-            del file_info[k]
+    if not args.no_filter:
+        for k in orig_keys:
+            if file_info[k] is None or not meets_requirements(
+                    file_info[k], k, verbose=args.verbose):
+                del file_info[k]
 
-    print(f'Filtered out {original_length - len(file_info)} files that did not meet requirements.')
-    print(f'Kept {len(file_info)} files.')
+        print(f'Filtered out {original_length - len(file_info)} files that did not meet requirements.')
+        print(f'Kept {len(file_info)} files.')
 
+    if args.secondary_key is not None:
+        print(f'Filtering out files that are not in {args.secondary_key}...')
+        with open(f'analysis_outputs/file_info_{args.secondary_key}.json') as f:
+            file_info2 = json.load(f)
+        selected_file_info = {}
+        for k in file_info2.keys():
+            if k in file_info:
+                selected_file_info[k] = file_info[k]
+        file_info = selected_file_info
+
+        print(f'Filtered out {original_length - len(file_info)} files that did not meet requirements.')
+        print(f'Kept {len(file_info)} files.')
+        
     # Read in the code info
     with open('codeinfo.json') as f:
         code_info = json.load(f)
@@ -98,7 +148,9 @@ if __name__ == '__main__':
     df = pd.DataFrame.from_dict(
         {'filename': list(file_info.keys())})
 
-    for vars in ['mean_cc', 'ntokens', 'flake8', 'filesize', 'obfuscations', 'autogen']:
+    for vars in ['mean_cc', 'ntokens', 'flake8_nsyntaxerrors',
+                 'flake8_nmessages', 'filesize', 'obfuscations',
+                 'autogen', 'nfuncs']:
         df[vars] = [file_info[i][vars] if vars in file_info[i] else None for i in df.filename]
     
     file_info = fix_hal_metrics(file_info)
@@ -119,4 +171,8 @@ if __name__ == '__main__':
 
 
     # Save the data frame
-    df.to_csv(f'code_info_{args.dataset}.csv')
+    if args.secondary_key is not None:
+        sec_key = f'_filt-{args.secondary_key}'
+    else:
+        sec_key = ''
+    df.to_csv(f'analysis_outputs/code_info_{args.dataset}{sec_key}.csv')
