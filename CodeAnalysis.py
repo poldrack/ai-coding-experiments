@@ -23,26 +23,32 @@ from ttest import t_test_ind_report
 
 # %% tags=[]
 
-df = pd.read_csv(f'code_info_github.csv')
-df = pd.concat([df,
-                pd.read_csv(f'code_info_chatgpt.csv'),])
+df_github = pd.read_csv(f'code_info_github.csv', index_col=0)
+df_github['origin'] = 'github'
+
+df_chatgpt = pd.read_csv(f'code_info_chatgpt.csv', index_col=0)
+df_chatgpt['origin'] = 'chatgpt'
+
+df = pd.concat([df_github, df_chatgpt])
 df.reset_index(inplace=True)
 del df['index']
-df = df.dropna()
-df['flake8_per_loc'] = df['flake8'] / df['loc']
+df['flake8_messages_per_loc'] = df['flake8_nmessages'] / df['raw_loc']
+df['flake8_syntaxerrors_per_loc'] = df['flake8_nsyntaxerrors'] / df['raw_loc']
 
 # %% tags=[]
 
 filter_for_length = True
 
 if filter_for_length:
-    min_loc = df.query('origin == "chatgpt"')['loc'].min()
-    max_loc = df.query('origin == "chatgpt"')['loc'].max()
-    df = df[df['loc'] <= max_loc]
-    df = df[df['loc'] >= min_loc]
+    min_loc = df.query('origin == "chatgpt"')['raw_loc'].min()
+    max_loc = df.query('origin == "chatgpt"')['raw_loc'].max()
+    df = df[df['raw_loc'] <= max_loc]
+    df = df[df['raw_loc'] >= min_loc]
 # %%
 
-for var in [ 'mi', 'bugs', 'difficulty', 'flake8_per_loc', 'mean_cyccomp']:
+for var in [ 'mi_mi', 'hal_bugs', 'hal_difficulty',
+            'flake8_messages_per_loc', 'flake8_syntaxerrors_per_loc',
+            'mean_cc']:
     print(var)
     print(t_test_ind_report(df[df['origin'] == 'chatgpt'][var],
           df[df['origin'] == 'github'][var]))
