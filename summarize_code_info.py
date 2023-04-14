@@ -123,7 +123,7 @@ if __name__ == '__main__':
                 del file_info[k]
 
         print(f'Filtered out {original_length - len(file_info)} files that did not meet requirements.')
-        print(f'Kept {len(file_info)} files.')
+    print(f'Found {len(file_info)} files.')
 
     if args.secondary_key is not None:
         print(f'Filtering out files that are not in {args.secondary_key}...')
@@ -151,7 +151,12 @@ if __name__ == '__main__':
     for vars in ['mean_cc', 'ntokens', 'flake8_nsyntaxerrors',
                  'flake8_nmessages', 'filesize', 'obfuscations',
                  'autogen', 'nfuncs']:
-        df[vars] = [file_info[i][vars] if vars in file_info[i] else None for i in df.filename]
+        for i in df.index:
+            f = df.loc[i, 'filename']
+            if file_info[f] is not None and vars in file_info[f]:
+                df.loc[i, vars] = file_info[f][vars]
+            else:
+                df.loc[i, vars] = None
     
     file_info = fix_hal_metrics(file_info)
 
@@ -159,7 +164,7 @@ if __name__ == '__main__':
         for s in subvar:
             results = []
             for i in df.filename:
-                if var not in file_info[i]:
+                if file_info[i] is None or var not in file_info[i]:
                     results.append(None)
                 elif file_info[i][var] is None:
                     results.append(None)
@@ -175,4 +180,8 @@ if __name__ == '__main__':
         sec_key = f'_filt-{args.secondary_key}'
     else:
         sec_key = ''
-    df.to_csv(f'analysis_outputs/code_info_{args.dataset}{sec_key}.csv')
+    if args.no_filter:
+        filter_key == ''
+    else:
+        filter_key = '_filtered'
+    df.to_csv(f'analysis_outputs/code_info_{args.dataset}{sec_key}{filter_key}.csv')
