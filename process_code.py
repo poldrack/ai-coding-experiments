@@ -50,7 +50,6 @@ def get_metrics(infile, metric):
     try:
         output = subprocess.run(['radon', metric, '-j', infile], capture_output=True, text=True)
         result = json.loads(output.stdout)
-        print(result)
         return result[infile.as_posix()]
     except:
         print(f'error running radon metric {metric} on ', infile)
@@ -60,7 +59,7 @@ def get_metrics(infile, metric):
 def get_flake8(infile):
     try:
         output = subprocess.run(['flake8', infile], capture_output=True, text=True)
-        return len(output.stdout.strip().split("\n"))
+        return output.stdout.strip().split("\n")
     except Exception as e:
         print('error running flake8 on ', infile)
         print(e)
@@ -92,9 +91,12 @@ def find_autogen_markers(code):
     # Use regular expression to find auto-generated markers
     # per suggestion by Mark Chen from OpenAI
     autogen_patterns = ['all changes made in this file will be lost', 
-                        'auto-generated', 'created by makepy.py']
+                        'auto-generated', 'created by makepy.py',
+                        'automatically generated', 
+                        'chatgpt', 'autogenerate']
     autogen_matches = [re.search(pattern, ' '.join(code).lower()) for pattern in autogen_patterns]
     return len([i for i in autogen_matches if i is not None]) > 0
+
 
 def find_obfuscation(code):
     # Use regular expression to find x-x obfuscation patterns
@@ -107,9 +109,17 @@ def find_obfuscation(code):
     return nmatches
 
 
+def get_syntax_errors(flake8):
+    # Get the number of syntax errors
+    syntax_errors = [i for i in flake8 if 'E9' in i]
+    return len(syntax_errors)
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--dataset', default='github', help='dataset label')
+    parser.add_argument('-d', '--dataset',
+                        default='github',
+                        help='dataset label')
     return parser.parse_args()
 
 
@@ -154,13 +164,26 @@ if __name__ == '__main__':
         file_info[fname]['ntokens'] = getTokenLength(code)
 
         file_info[fname]['flake8'] = get_flake8(infile)
+
+        file_info[fname]['flake8_nmessages'] = len(
+            file_info[fname]['flake8']) if file_info[fname]['flake8'] is not None else None
+
+        file_info[fname]['flake8_nsyntaxerrors'] = get_syntax_errors(
+            file_info[fname]['flake8']) if file_info[fname]['flake8'] is not None else None
         
         # Compute metrics
         for metric in ['cc', 'hal', 'raw', 'mi']:
             file_info[fname][metric] = get_metrics(infile, metric)
+        if 'functions' in file_info[fname]['hal']:
+            file_info[fname]['nfuncs'] = len(file_info[fname]['hal']['functions'])
+        else:
+            file_info[fname]['nfuncs'] = None
+
         print(fname, file_info[fname])
+
         if len(file_info) > maxfiles:
             break
+        
 
-    with open(f'file_info_{args.dataset}.json', 'w') as f:
+    with open(f'analysis_outputs/file_info_{args.dataset}.json', 'w') as f:
         json.dump(file_info, f, cls=NpEncoder)
