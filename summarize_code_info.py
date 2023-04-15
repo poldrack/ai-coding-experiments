@@ -7,6 +7,7 @@ import argparse
 
 def meets_requirements(dct, key, max_mean_line_length=100, 
                        max_max_line_length=1000, max_tokens=2500,
+                       min_tokens=200,
                        verbose=False):
     """
     from codex paper: We filtered out files which were likely auto-generated, had average line
@@ -33,7 +34,7 @@ def meets_requirements(dct, key, max_mean_line_length=100,
         return False
     
     # is it obfuscated?
-    if dct['obfuscations'] > 1000:
+    if dct['obfuscations'] > 100:
         if verbose:
             print(f'Obfuscated: {key}')
         return False
@@ -53,6 +54,11 @@ def meets_requirements(dct, key, max_mean_line_length=100,
     if dct['ntokens'] > max_tokens:
         if verbose:
             print(f'Number of tokens too large: {key}')
+        return False
+
+    if dct['ntokens'] < min_tokens:
+        if verbose:
+            print(f'Number of tokens too small: {key}')
         return False
 
     return True
@@ -91,8 +97,8 @@ def parse_args():
                         help='dataset label')
     parser.add_argument('-v', '--verbose', action='store_true', 
                         help='verbose output')
-    parser.add_argument('--no-filter', action='store_true', 
-                        help='do not filter out files that do not meet requirements')
+    parser.add_argument('--filter', action='store_true', 
+                        help='filter out files that do not meet requirements (shoudl already be done)')
     parser.add_argument('--secondary-key',
                         help='secondary key to use for file info (e.g., "gpt4")')
     return parser.parse_args()
@@ -109,14 +115,14 @@ if __name__ == '__main__':
     }
 
     # Read in the file info
-    with open(f'analysis_outputs/file_info_{args.dataset}.json') as f:
+    with open(f'results/{args.dataset}/code_analytics.json') as f:
         file_info = json.load(f)
 
     original_length = len(file_info)
 
     # filter out the files that don't meet requirements
     orig_keys = list(file_info.keys())
-    if not args.no_filter:
+    if args.filter:
         for k in orig_keys:
             if file_info[k] is None or not meets_requirements(
                     file_info[k], k, verbose=args.verbose):
@@ -139,7 +145,7 @@ if __name__ == '__main__':
         print(f'Kept {len(file_info)} files.')
         
     # Read in the code info
-    with open('codeinfo.json') as f:
+    with open('data/github/code/github_code_info.json') as f:
         code_info = json.load(f)
 
     file_info = add_mean_complexity(file_info)
@@ -149,8 +155,7 @@ if __name__ == '__main__':
         {'filename': list(file_info.keys())})
 
     for vars in ['mean_cc', 'ntokens', 'flake8_nsyntaxerrors',
-                 'flake8_nmessages', 'filesize', 'obfuscations',
-                 'autogen', 'nfuncs']:
+                 'flake8_nmessages', 'filesize', 'nfuncs']:
         for i in df.index:
             f = df.loc[i, 'filename']
             if file_info[f] is not None and vars in file_info[f]:
@@ -180,8 +185,9 @@ if __name__ == '__main__':
         sec_key = f'_filt-{args.secondary_key}'
     else:
         sec_key = ''
-    if args.no_filter:
-        filter_key == ''
-    else:
+    if args.filter:
         filter_key = '_filtered'
-    df.to_csv(f'analysis_outputs/code_info_{args.dataset}{sec_key}{filter_key}.csv')
+    else:
+        filter_key = ''
+
+    df.to_csv(f'results/{args.dataset}/code_analytics{sec_key}{filter_key}.csv')
