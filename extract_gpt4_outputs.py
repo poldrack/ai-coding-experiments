@@ -26,14 +26,14 @@ def extract_python_code(text, key):
     return python_code
 
 if __name__ == "__main__":
-    with open('gpt4_recoded_output.json', 'r') as f:
+    with open('data/gpt4/outputs_of_selected_for_recoding_prompt2.json', 'r') as f:
         gpt4_recoded_output = json.load(f)
     print(f'Loaded {len(gpt4_recoded_output)} recoded files')
 
-    with open('github_code_for_recoding_info.json', 'r') as f:
+    with open('data/github/selected.json', 'r') as f:
         github_info = json.load(f)
 
-    outdir = 'gpt4_code'
+    outdir = 'data/gpt4/code'
     os.makedirs(outdir, exist_ok=True)
 
     save_raw = False
@@ -61,7 +61,7 @@ if __name__ == "__main__":
         items[key]['code'] = extract_python_code(item['answer'], key)
         #text = extract_text_from_comments_and_strings(item['code'])
         filename = github_info[key]['filename'].replace(
-            'github_code', outdir)
+            'github', 'gpt4')
         assert filename != github_info[key]['filename']
         with open(filename, 'w') as f:
             f.write('\n'.join(item['code']))
