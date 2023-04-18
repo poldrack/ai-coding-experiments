@@ -1,5 +1,9 @@
 import json
 import collections
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 
 flake8_error_messages = {
     "E101": "Indentation contains mixed spaces and tabs",
@@ -131,23 +135,50 @@ def process_flake8_errors(flake8_errors):
 
 
 if __name__ == "__main__":
-    with open('analysis_outputs/file_info_github.json', 'r') as f:
-        file_info = json.load(f)
-    
-    flake8_errors = []
-    flake8_errorcodes = []
-    for filename, info in file_info.items():
-        if info is not None and 'flake8' in info:
-            errors = process_flake8_errors(info['flake8'])
-            flake8_errorcodes.extend(
-                [i.split(' ')[0] for i in errors if len(i) > 0])
-            flake8_errors.extend(errors)
-counter = collections.Counter(flake8_errorcodes)
+    with open('results/github/code_analytics.json', 'r') as f:
+        github_data = json.load(f)
 
-for error, count in counter.most_common():
-    if error in flake8_error_messages:
-        print(count, error, flake8_error_messages[error])
-        continue
-    else:
-        continue
-    # print(f'{count} {error} (no message found)')
+    with open('results/gpt4/code_analytics.json', 'r') as f:
+        gpt4_data = json.load(f)
+
+    shared_keys = set(github_data.keys()).intersection(
+        gpt4_data.keys())
+
+    github_data = {k: github_data[k] for k in shared_keys}
+    gpt4_data = {k: gpt4_data[k] for k in shared_keys}
+
+    flake8_errors = {'github': [], 'gpt4': []}
+    errorcounts = {'github': None, 'gpt4': None}
+    error_df = {'github': None, 'gpt4': None}
+    for dataset, data in zip(['github', 'gpt4'], [github_data, gpt4_data]):
+        
+        for filename, info in data.items():
+            if info is not None and 'flake8' in info:
+                errors = process_flake8_errors(info['flake8'])
+                flake8_errors[dataset].extend(
+                    [i.split(' ')[0] for i in errors if len(i) > 0])
+
+
+        errorcounts[dataset] = collections.Counter(
+            flake8_errors[dataset])
+        error_df[dataset] = pd.DataFrame(
+            errorcounts[dataset].items(), 
+            columns=['errorcode', 'count'])
+        error_df[dataset]['dataset'] = dataset
+
+all_errors = pd.concat([error_df['github'], error_df['gpt4']])
+
+errors_joined = error_df['github'].merge(
+    error_df['gpt4'], on='errorcode', how='outer')
+
+errors_joined['sum_errors'] = errors_joined['count_x'] + errors_joined['count_y']
+sum_threshold = 20
+errors_joined = errors_joined[errors_joined['sum_errors'] > sum_threshold]
+
+all_errors = all_errors[all_errors['errorcode'].isin(errors_joined['errorcode'])]
+
+all_errors.sort_values(by='count', inplace=True)
+
+sns.barplot(x='errorcode', y='count', 
+            hue='dataset', data=all_errors)
+plt.show()
