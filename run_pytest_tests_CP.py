@@ -46,32 +46,31 @@ def extract_test_results(line):
     passed_tests = int(passed_match.group(1)) if passed_match else 0
     error_tests = int(error_match.group(1)) if error_match else 0
 
-    return (failed_tests, passed_tests, error_tests)
+    return (passed_tests, failed_tests, error_tests)
 
 
 def get_errors(test_output):
-    n_errors = 0
-    n_failed = 0
-    if 'error' in test_output[-1]:
-        n_errors = int(test_output[-1].split(' ')[1])
-    if 'failed' in test_output[-1]:
-        n_failed = int(test_output[-1].split(' ')[1])
+    npassed, nfailed, nerrors = extract_test_results(test_output[-1])
+
     errors = []
     for line in test_output:
-        if 'Did you mean' in line:
+        if len(line) == 0:
             continue
-        if 'E   ' in line:
-            if 'assert' in line or 'Error' in line:
-                errors.append(line)
+        if line[0] == '>' and ('assert' in line or 'raise' in line):
+            errors.append(line)
+        elif line[0] == 'E' and 'TypeError' in line:
+            errors.append(line)
+#        if 'DID NOT RAISE' in line:
+#            errors.append(line)
     try:
-        assert len(errors) == (n_errors + n_failed)
+        assert len(errors) == (nerrors + nfailed)
     except AssertionError:
         print('AssertionError')
         print(test_output)
         print(f'len(errors) = {len(errors)}')
-        print(f'n_errors + n_failed = {n_errors + n_failed}')
+        print(f'n_errors + n_failed = {nerrors + nfailed}')
         raise AssertionError
-    return n_errors, n_failed, errors
+    return errors
 
 if __name__ == "__main__":
     coverage_df = pd.read_csv('results/conceptual_prompting/code_coverage.csv')
@@ -84,13 +83,16 @@ if __name__ == "__main__":
         # use Agg backend to avoid opening a window
         test_output = run_test(f'MPLBACKEND=Agg python -m pytest {d}')
         coverage_df.loc[idx, 'ntests'] = int(test_output[4].split(' ')[1])
-        if 'passed' in test_output[-1] and 'failed' not in test_output[-1]:
+        npassed, nfailed, nerrors = extract_test_results(test_output[-1])
+        print(coverage_df.loc[idx, 'ntests'], npassed, nfailed, nerrors)
+        
+        if nfailed == 0 and nerrors == 0:
             success[d] = test_output[-1]
             coverage_df.loc[idx, 'test_success'] = True
         else:
             print(d)
             failure[d] = test_output
-            n_errors, n_failed, errors = get_errors(test_output)
+            errors = get_errors(test_output)
             print(get_errors(test_output))
             print('')
 
