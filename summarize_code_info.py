@@ -133,7 +133,7 @@ if __name__ == '__main__':
 
     if args.secondary_key is not None:
         print(f'Filtering out files that are not in {args.secondary_key}...')
-        with open(f'analysis_outputs/file_info_{args.secondary_key}.json') as f:
+        with open(f'results/{args.secondary_key}/code_analytics.json') as f:
             file_info2 = json.load(f)
         selected_file_info = {}
         for k in file_info2.keys():
