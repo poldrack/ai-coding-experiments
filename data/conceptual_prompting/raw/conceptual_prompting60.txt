@@ -1,0 +1,50 @@
+Here is a Python function to estimate the effective population size of a species, given its census population size, sex ratio, and variance in reproductive success:
+
+```python
+def effective_population_size(census_population_size, sex_ratio, variance_reproductive_success):
+    """
+    Estimates the effective population size based on the given parameters.
+
+    Parameters:
+    census_population_size (int): The census population size.
+    sex_ratio (float): The ratio of males to females in the population (e.g. 0.5 for an equal ratio).
+    variance_reproductive_success (float): The variance in reproductive success.
+
+    Returns:
+    int: The estimated effective population size.
+    """
+    # Number of males
+    n_males = census_population_size * sex_ratio
+
+    # Number of females
+    n_females = census_population_size * (1 - sex_ratio)
+
+    # The number of genes transmitted effectively.
+    n_e = (4 * n_males * n_females) / (n_males + n_females + 2 * variance_reproductive_success)
+
+    return int(n_e)
+```
+
+Here is a set of pytest tests that exercise the `effective_population_size` function:
+
+```python
+import pytest
+from effective_population_size import effective_population_size
+
+
+def test_effective_population_size():
+    assert effective_population_size(1000, 0.5, 1) == 333
+    assert effective_population_size(5000, 0.6, 10) == 1063
+    assert effective_population_size(2000, 0.55, 2) == 546
+    assert effective_population_size(100, 0.4, 5) == 21
+
+@pytest.mark.parametrize("census_population_size, sex_ratio, variance_reproductive_success, expected", [
+    (1000, 0.5, 1, 333),
+    (5000, 0.6, 10, 1063),
+    (2000, 0.55, 2, 546),
+    (100, 0.4, 5, 21),
+])
+def test_effective_population_size_parametrized(census_population_size, sex_ratio, variance_reproductive_success, expected):
+    assert effective_population_size(census_population_size, sex_ratio, variance_reproductive_success) == expected
+```
+Make sure to save the function in a file named `effective_population_size.py`, and the tests in a separate file named `test_effective_population_size.py`. To execute the tests, simply run `pytest test_effective_population_size.py` in your terminal.

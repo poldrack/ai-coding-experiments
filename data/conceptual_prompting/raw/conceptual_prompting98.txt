@@ -1,0 +1,48 @@
+Here is the Python program to compute the Gini coefficient of income inequality:
+
+```python
+def gini_coefficient(income_list):
+    """
+    Calculate the Gini coefficient based on the input list of incomes.
+    :param income_list: list of incomes (floating point numbers)
+    :return: Gini coefficient (floating pointNumber)
+    """
+    n = len(income_list)
+    sorted_incomes = sorted(income_list)
+    sum_of_absolute_differences = 0
+
+    for i in range(n):
+        sum_of_absolute_differences += (i - (n - 1) / 2) * sorted_incomes[i]
+
+    mean_income = sum(income_list) / n
+    gini = (sum_of_absolute_differences / mean_income) / n
+
+    return gini
+
+
+if __name__ == "__main__":
+    incomes = [50000, 100000, 30000, 60000, 45000]
+    print("Gini Coefficient:", gini_coefficient(incomes))
+```
+
+Here is the set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from gini import gini_coefficient
+
+def test_gini_positive_numbers():
+    assert pytest.approx(gini_coefficient([40000, 80000, 20000, 100000, 60000])) == 0.24489796
+
+def test_gini_zeroes():
+    assert pytest.approx(gini_coefficient([0, 0, 0, 0])) == 0.0
+
+def test_gini_single_value():
+    assert pytest.approx(gini_coefficient([55000])) == 0.0
+
+def test_gini_negative_values():
+    with pytest.raises(ValueError):
+        gini_coefficient([-10000, 30000, 60000, 20000])
+```
+
+Please note that to use the pytest package, you'll need to install it first by running `pip install pytest`. Additionally, you should save the Gini coefficient calculation script in a separate file named `gini.py`.

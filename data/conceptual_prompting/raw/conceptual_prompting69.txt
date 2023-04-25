@@ -1,0 +1,54 @@
+Here is a Python program that calculates the period of a simple pendulum:
+
+```python
+import math
+
+def pendulum_period(length, gravity):
+    """
+    Calculate the period of a simple pendulum.
+
+    Args:
+        length (float): Length of the pendulum in meters.
+        gravity (float): Acceleration due to gravity in m/s^2.
+
+    Returns:
+        float: The period of the pendulum in seconds.
+    """
+    if length <= 0 or gravity <= 0:
+        raise ValueError("Length and gravity must be positive numbers.")
+
+    period = 2 * math.pi * math.sqrt(length / gravity)
+    return period
+
+if __name__ == "__main__":
+    length = 1.0  # Length of the pendulum in meters
+    gravity = 9.81  # Acceleration due to gravity in m/s^2
+
+    period = pendulum_period(length, gravity)
+    print(f"The period of the pendulum with length {length} m and gravity {gravity} m/s^2 is {period:.2f} seconds.")
+```
+
+Here is a set of pytest tests to exercise each of the functions:
+
+```python
+import pytest
+from pendulum_period import pendulum_period
+
+def test_pendulum_period():
+    length = 1.0
+    gravity = 9.81
+
+    period = pendulum_period(length, gravity)
+    assert round(period, 2) == 2.01
+
+def test_pendulum_period_with_zero_length():
+    with pytest.raises(ValueError):
+        pendulum_period(0, 9.81)
+
+def test_pendulum_period_with_zero_gravity():
+    with pytest.raises(ValueError):
+        pendulum_period(1.0, 0)
+
+if __name__ == "__main__":
+    pytest.main()
+```

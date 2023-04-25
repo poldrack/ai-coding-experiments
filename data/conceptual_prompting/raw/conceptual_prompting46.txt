@@ -1,0 +1,42 @@
+Here's a Python implementation of the Euclidean algorithm for computing the GCD of two numbers:
+
+```python
+def gcd(a: int, b: int) -> int:
+    """
+    Compute the greatest common divisor (GCD) of two numbers using the Euclidean algorithm.
+    
+    :param a: First number
+    :param b: Second number
+    :return: GCD of a and b
+    """
+    while b:
+        a, b = b, a % b
+    return abs(a)
+
+
+if __name__ == "__main__":
+    num1 = 56
+    num2 = 98
+    result = gcd(num1, num2)
+    print(f"The GCD of {num1} and {num2} is {result}.")
+```
+
+For the pytest tests, you can use the following code:
+
+```python
+import pytest
+from gcd_euclidean import gcd
+
+def test_gcd():
+    assert gcd(56, 98) == 14
+    assert gcd(98, 56) == 14
+    assert gcd(42, 28) == 14
+    assert gcd(0, 5) == 5
+    assert gcd(5, 0) == 5
+    assert gcd(-14, 28) == 14
+    assert gcd(14, -28) == 14
+    assert gcd(-14, -28) == 14
+    assert gcd(0, 0) == 0
+```
+
+Make sure to save the initial implementation in a file named `gcd_euclidean.py` and the test file as `test_gcd_euclidean.py`. You can then run the tests with `pytest test_gcd_euclidean.py`.

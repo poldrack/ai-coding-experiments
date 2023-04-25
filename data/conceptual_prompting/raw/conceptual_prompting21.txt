@@ -1,0 +1,50 @@
+Here is the Python code for calculating the biodiversity index using the Simpson's Diversity Index:
+
+```python
+def calculate_simpsons_diversity_index(species_counts):
+    """
+    Calculate the Simpson's Diversity Index based on the species counts in an ecosystem.
+    
+    :param species_counts: a list of counts of different species in the ecosystem
+    :return: the Simpson's Diversity Index (D) as a float
+    """
+    total_count = sum(species_counts)
+    sum_of_squares = sum([count ** 2 for count in species_counts])
+    diversity_index = 1 - sum_of_squares / (total_count ** 2)
+
+    return diversity_index
+
+
+def main():
+    # Example species counts in an ecosystem
+    example_counts = [45, 22, 16, 9, 8]
+    biodiversity_index = calculate_simpsons_diversity_index(example_counts)
+    print("The biodiversity index of the given ecosystem is:", biodiversity_index)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+Here is a separate code block with pytest tests for the `calculate_simpsons_diversity_index` function:
+
+```python
+import pytest
+from biodiversity import calculate_simpsons_diversity_index
+
+
+def test_calculate_simpsons_diversity_index():
+    test_data = [
+        ([45, 22, 16, 9, 8], 0.7386978417266187),
+        ([1, 1, 1, 1, 1], 0.8),
+        ([100, 0, 0], 0.98),
+        ([1], 0),
+        ([50, 50], 0.5),
+    ]
+
+    for counts, expected_diversity_index in test_data:
+        result = calculate_simpsons_diversity_index(counts)
+        assert pytest.approx(result) == expected_diversity_index
+```
+
+To run the tests, save the Python code with the function in a file named `biodiversity.py`, and the tests in a file named `test_biodiversity.py`. Then, run `pytest` in the terminal.

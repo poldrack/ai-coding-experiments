@@ -1,0 +1,68 @@
+Here's a Python function to calculate the Pearson correlation coefficient between two variables:
+
+```python
+import numpy as np
+
+def pearson_correlation(x, y):
+    """
+    Calculate the Pearson correlation coefficient between two variables.
+    
+    :param x: List of values of the first variable
+    :param y: List of values of the second variable
+    :return: Pearson correlation coefficient
+    """
+    if len(x) != len(y):
+        raise ValueError("Both lists should have the same length")
+
+    mean_x = np.mean(x)
+    mean_y = np.mean(y)
+
+    num = np.sum((np.array(x) - mean_x) * (np.array(y) - mean_y))
+    den = np.sqrt(np.sum((np.array(x) - mean_x) ** 2) * np.sum((np.array(y) - mean_y) ** 2))
+
+    if den == 0:
+        raise ValueError("Pearson correlation is not defined when the denominator is zero")
+
+    correlation = num / den
+    return correlation
+```
+
+Here is a set of pytest tests that exercise the above function:
+
+```python
+import pytest
+from pearson_correlation import pearson_correlation
+
+def test_positive_correlation():
+    x = [1, 2, 3, 4, 5]
+    y = [2, 4, 6, 8, 10]
+    assert pearson_correlation(x, y) == 1
+
+
+def test_negative_correlation():
+    x = [1, 2, 3, 4, 5]
+    y = [10, 8, 6, 4, 2]
+    assert pearson_correlation(x, y) == -1
+
+
+def test_no_correlation():
+    x = [1, 2, 3, 4, 5]
+    y = [5, 2, 1, 8, 10]
+    assert round(pearson_correlation(x, y), 2) == 0.24
+
+
+def test_unequal_lengths():
+    x = [1, 2, 3, 4, 5]
+    y = [2, 4, 6]
+    with pytest.raises(ValueError):
+        pearson_correlation(x, y)
+
+
+def test_zero_denominator():
+    x = [1, 1, 1, 1, 1]
+    y = [2, 2, 2, 2, 2]
+    with pytest.raises(ValueError):
+        pearson_correlation(x, y)
+```
+
+Before running the tests, make sure to save the function in a file named `pearson_correlation.py` and the tests in a file named `test_pearson_correlation.py`. You can then run the tests using the `pytest` command.

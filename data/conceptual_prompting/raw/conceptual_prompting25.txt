@@ -1,0 +1,86 @@
+Here's the Python code for performing a one-sample t-test:
+
+```python
+import numpy as np
+import scipy.stats as stats
+
+def generate_sample_data(sample_size, population_mean, population_std_dev):
+    """
+    Generate a random sample with specified size, mean, and standard deviation.
+
+    Parameters:
+        sample_size (int): The size of the random sample.
+        population_mean (float): The mean of the population from which the sample is drawn.
+        population_std_dev (float): The standard deviation of the population.
+
+    Returns:
+        np.array: The generated sample data.
+    """
+    sample = np.random.normal(loc=population_mean, scale=population_std_dev, size=sample_size)
+    return sample
+
+def perform_t_test(sample, hypothesized_mean):
+    """
+    Perform a one-sample t-test on the given sample with a specified mean to test against.
+
+    Parameters:
+        sample (np.array): The sample data.
+        hypothesized_mean (float): The mean to test against.
+
+    Returns:
+        tuple: A tuple containing the t-statistic and the p-value.
+    """
+    t_statistic, p_value = stats.ttest_1samp(a=sample, popmean=hypothesized_mean)
+    return t_statistic, p_value
+
+def main():
+    sample_size = 50
+    population_mean = 100
+    population_std_dev = 10
+    hypothesized_mean = 105
+
+    sample = generate_sample_data(sample_size, population_mean, population_std_dev)
+    t_statistic, p_value = perform_t_test(sample, hypothesized_mean)
+
+    print(f"T-statistic: {t_statistic}")
+    print(f"P-value: {p_value}")
+
+if __name__ == "__main__":
+    main()
+```
+
+And here's a set of pytest tests to exercise the functions:
+
+```python
+import pytest
+import numpy as np
+
+from one_sample_t_test import generate_sample_data, perform_t_test
+
+def test_generate_sample_data():
+    sample_size = 100
+    population_mean = 50
+    population_std_dev = 5
+    sample = generate_sample_data(sample_size, population_mean, population_std_dev)
+
+    assert isinstance(sample, np.ndarray)
+    assert sample.size == sample_size
+    assert np.isclose(np.mean(sample), population_mean, atol=1e-1, rtol=1e-1)
+    assert np.isclose(np.std(sample), population_std_dev, atol=1e-1, rtol=1e-1)
+
+def test_perform_t_test():
+    sample = np.array([5, 7, 3, 2, 8, 12, 10, 11, 9, 9])
+    hypothesized_mean = 8
+
+    t_statistic, p_value = perform_t_test(sample, hypothesized_mean)
+
+    assert isinstance(t_statistic, float)
+    assert isinstance(p_value, float)
+
+    # Using an assert for known value from the sample data
+    assert np.isclose(t_statistic, -1.8551, atol=1e-4, rtol=1e-4)
+    assert np.isclose(p_value, 0.08637, atol=1e-4, rtol=1e-4)
+
+if __name__ == "__main__":
+    pytest.main()
+```

@@ -1,0 +1,86 @@
+Here's a Python implementation of the Huffman Coding algorithm, comprised of several modular functions:
+
+```python
+import heapq
+from collections import defaultdict
+
+def calc_frequencies(data):
+    freq = defaultdict(int)
+    for char in data:
+        freq[char] += 1
+    return freq
+
+def create_huffman_tree(freq):
+    heap = [[weight, [char, ""]] for char, weight in freq.items()]
+    heapq.heapify(heap)
+    
+    while len(heap) > 1:
+        lo = heapq.heappop(heap)
+        hi = heapq.heappop(heap)
+        
+        for pair in lo[1:]:
+            pair[1] = '0' + pair[1]
+        for pair in hi[1:]:
+            pair[1] = '1' + pair[1]
+            
+        heapq.heappush(heap, [lo[0] + hi[0]] + lo[1:] + hi[1:])
+    return heap[0]
+
+def generate_huffman_dict(huff_tree):
+    huff_dict = {}
+    for pair in huff_tree[1:]:
+        char, code = pair
+        huff_dict[char] = code
+    return huff_dict
+
+def compress_data(data, huff_dict):
+    compressed_data = ""
+    for char in data:
+        compressed_data += huff_dict[char]
+    return compressed_data
+
+def huffman_encoding(data):
+    freq = calc_frequencies(data)
+    huff_tree = create_huffman_tree(freq)
+    huff_dict = generate_huffman_dict(huff_tree)
+
+    compressed_data = compress_data(data, huff_dict)
+    
+    return huff_dict, compressed_data
+```
+
+Here's a set of pytest tests that can be used to test each part of the Huffman Coding algorithm:
+
+```python
+import pytest
+from huffman import calc_frequencies, create_huffman_tree, generate_huffman_dict, compress_data, huffman_encoding
+
+def test_calc_frequencies():
+    data = "aabcc"
+    freq = calc_frequencies(data)
+    assert freq == {'a': 2, 'b': 1, 'c': 2}
+
+def test_create_huffman_tree():
+    freq = {'a': 2, 'b': 1, 'c': 2}
+    huff_tree = create_huffman_tree(freq)
+    assert huff_tree == [5, ['a', '0'], ['c', '10'], ['b', '11']]
+
+def test_generate_huffman_dict():
+    huff_tree = [5, ['a', '0'], ['c', '10'], ['b', '11']]
+    huff_dict = generate_huffman_dict(huff_tree)
+    assert huff_dict == {'a': '0', 'c': '10', 'b': '11'}
+
+def test_compress_data():
+    data = "aabcc"
+    huff_dict = {'a': '0', 'c': '10', 'b': '11'}
+    compressed_data = compress_data(data, huff_dict)
+    assert compressed_data == "0010110"
+
+def test_huffman_encoding():
+    data = "aabcc"
+    huff_dict, compressed_data = huffman_encoding(data)
+    assert huff_dict == {'a': '0', 'c': '10', 'b': '11'}
+    assert compressed_data == "0010110"
+```
+
+These tests cover most of the basic functionality for data compression using this Huffman Coding implementation.

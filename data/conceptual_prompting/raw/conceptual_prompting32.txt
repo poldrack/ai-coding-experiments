@@ -1,0 +1,44 @@
+Here is a Python program to determine the breakeven point for a firm:
+
+```python
+def breakeven_point(fixed_costs, variable_costs, selling_price):
+    """
+    Calculate the breakeven point given fixed costs, variable costs, and selling price per unit.
+
+    :param fixed_costs: The fixed costs of the firm.
+    :param variable_costs: The variable costs per unit.
+    :param selling_price: The selling price per unit.
+    :return: The breakeven point.
+    """
+    if selling_price <= variable_costs:
+        return -1  # Breakeven point cannot be reached if selling price is less than variable costs.
+    
+    breakeven_units = fixed_costs / (selling_price - variable_costs)
+    return round(breakeven_units)
+
+# Example values
+fixed_costs_example = 10000
+variable_costs_example = 30
+selling_price_example = 50
+
+breakeven_units = breakeven_point(fixed_costs_example, variable_costs_example, selling_price_example)
+print(f"Breakeven point: {breakeven_units} units")
+```
+
+And here is a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from breakeven import breakeven_point
+
+@pytest.mark.parametrize("fixed_costs, variable_costs, selling_price, expected", [
+    (10000, 30, 50, 500),
+    (0, 30, 50, 0),
+    (5000, 10, 20, 500),
+    (1000, 35, 35, -1),
+])
+def test_breakeven_point(fixed_costs, variable_costs, selling_price, expected):
+    assert breakeven_point(fixed_costs, variable_costs, selling_price) == expected
+```
+
+You'll need to ensure that the `breakeven` function is in a separate file called `breakeven.py`. Then, simply run `pytest` in the command line to execute the tests.

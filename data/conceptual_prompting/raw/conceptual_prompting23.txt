@@ -1,0 +1,60 @@
+Here's a Python function that computes the energy levels of a hydrogen atom using the Rydberg formula:
+
+```python
+import math
+
+def rydberg_constant():
+    """
+    Returns the Rydberg constant for hydrogen in joules.
+    """
+    return 2.179e-18
+
+def energy_level(n1, n2):
+    """
+    Returns the energy difference between two energy levels of a hydrogen atom, n1 and n2, in joules.
+    Parameters:
+    - n1 (int): The principal quantum number for the first energy level, must be a positive integer.
+    - n2 (int): The principal quantum number for the second energy level, must be a positive integer.
+    """
+    if not (isinstance(n1, int) and isinstance(n2, int)):
+        raise ValueError("n1 and n2 must be integers")
+    if n1 <= 0 or n2 <= 0:
+        raise ValueError("n1 and n2 must be positive integers")
+    
+    R = rydberg_constant()
+    energy_diff = R * (1 / (n1 * n1) - 1 / (n2 * n2))
+    return energy_diff
+```
+
+And here's a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from hydrogen_energy import rydberg_constant, energy_level
+
+def test_rydberg_constant():
+    assert math.isclose(rydberg_constant(), 2.179e-18, rel_tol=1e-9), "Rydberg constant for hydrogen is incorrect"
+
+def test_energy_level():
+    # Test some known energy level differences
+    assert math.isclose(energy_level(1, 2), 1.635e-19, rel_tol=1e-9), "Energy difference for n1=1, n2=2 is incorrect"
+    assert math.isclose(energy_level(2, 3), 1.922e-20, rel_tol=1e-9), "Energy difference for n1=2, n2=3 is incorrect"
+    
+    # Test invalid input cases
+    with pytest.raises(ValueError):
+        energy_level(0, 2)
+    with pytest.raises(ValueError):
+        energy_level(1, 0)
+    with pytest.raises(ValueError):
+        energy_level(0, 0)
+    with pytest.raises(ValueError):
+        energy_level(-1, 2)
+    with pytest.raises(ValueError):
+        energy_level(2, -3)
+    with pytest.raises(ValueError):
+        energy_level(1.5, 3)
+    with pytest.raises(ValueError):
+        energy_level(3, "4")
+```
+
+Save the code in `hydrogen_energy.py`, and the tests in `test_hydrogen_energy.py`. To run the tests, just execute `pytest test_hydrogen_energy.py` in your terminal.

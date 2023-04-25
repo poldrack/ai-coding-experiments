@@ -1,0 +1,91 @@
+Here's a Python implementation of Dijkstra's algorithm for finding the shortest path in a weighted graph:
+
+```python
+import heapq
+
+def dijkstra(graph, start):
+    """
+    Find the shortest path in a weighted, connected graph using Dijkstra's algorithm.
+
+    :param graph: A dictionary of adjacency lists. Example format:
+                  graph = {'A': [('B', 1), ('C', 4)], 'B': [('A', 1), ('C', 3)], 'C': [('A', 4), ('B', 3)]}
+    :param start: The starting vertex.
+    :return: A tuple containing a dictionary of shortest path distances and a dictionary of predecessors.
+    """
+    distances = {vertex: float('inf') for vertex in graph}
+    distances[start] = 0
+    predecessors = {vertex: None for vertex in graph}
+
+    priority_queue = [(0, start)]
+
+    while priority_queue:
+        current_distance, current_vertex = heapq.heappop(priority_queue)
+
+        if current_distance > distances[current_vertex]:
+            continue
+
+        for neighbor, weight in graph[current_vertex]:
+            distance = current_distance + weight
+
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                predecessors[neighbor] = current_vertex
+                heapq.heappush(priority_queue, (distance, neighbor))
+
+    return distances, predecessors
+
+
+def shortest_path(graph, start, end):
+    """
+    Finds the shortest path between start and end vertices in a weighted, connected graph.
+
+    :param graph: A dictionary of adjacency lists. Example format:
+                  graph = {'A': [('B', 1), ('C', 4)], 'B': [('A', 1), ('C', 3)], 'C': [('A', 4), ('B', 3)]}
+    :param start: The starting vertex.
+    :param end: The end vertex.
+    :return: A list of vertices in the shortest path, including the start and end vertices.
+    """
+    distances, predecessors = dijkstra(graph, start)
+
+    path = [end]
+    while path[-1] != start:
+        path.append(predecessors[path[-1]])
+    path.reverse()
+
+    return path
+
+graph = {
+    'A': [('B', 1), ('C', 4)],
+    'B': [('A', 1), ('C', 3), ('D', 5)],
+    'C': [('A', 4), ('B', 3), ('D', 2)],
+    'D': [('B', 5), ('C', 2)]
+}
+
+print(shortest_path(graph, 'A', 'D'))  # Output: ['A', 'B', 'C', 'D']
+```
+
+Here are some pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from dijkstra import dijkstra, shortest_path
+
+@pytest.fixture
+def sample_graph():
+    return {
+        'A': [('B', 1), ('C', 4)],
+        'B': [('A', 1), ('C', 3), ('D', 5)],
+        'C': [('A', 4), ('B', 3), ('D', 2)],
+        'D': [('B', 5), ('C', 2)]
+    }
+
+def test_dijkstra(sample_graph):
+    distances, predecessors = dijkstra(sample_graph, 'A')
+    assert distances == {'A': 0, 'B': 1, 'C': 4, 'D': 6}
+    assert predecessors == {'A': None, 'B': 'A', 'C': 'B', 'D': 'C'}
+
+def test_shortest_path(sample_graph):
+    assert shortest_path(sample_graph, 'A', 'D') == ['A', 'B', 'C', 'D']
+    assert shortest_path(sample_graph, 'B', 'A') == ['B', 'A']
+    assert shortest_path(sample_graph, 'A', 'C') == ['A', 'B', 'C']
+```

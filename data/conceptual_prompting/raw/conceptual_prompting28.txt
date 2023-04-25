@@ -1,0 +1,94 @@
+Here's a Python code to calculate the information gain for a decision tree classifier:
+
+```python
+import math
+from collections import Counter
+
+def entropy(y):
+    """
+    Calculate the entropy for a list of class labels.
+    """
+    counts = Counter(y)
+    total = len(y)
+    entropy_score = sum(-count/total * math.log2(count/total) for count in counts.values())
+    return entropy_score
+
+def information_gain(x, y, feature_idx):
+    """
+    Calculate the information gain for a given feature.
+    Args:
+        x: 2D list of features
+        y: 1D list of class labels
+        feature_idx: Index of the feature we're considering
+    """
+    total_entropy = entropy(y)
+    
+    # split the data by feature values
+    split_data = {}
+    for row, label in zip(x, y):
+        feature_value = row[feature_idx]
+        if feature_value not in split_data:
+            split_data[feature_value] = ([], [])
+        split_data[feature_value][0].append(row)
+        split_data[feature_value][1].append(label)
+    
+    # calculate the weighted sum of entropies for each subset
+    weighted_entropy_sum = 0
+    total = len(y)
+    for x_subset, y_subset in split_data.values():
+        weight = len(y_subset) / total
+        subset_entropy = entropy(y_subset)
+        weighted_entropy_sum += weight * subset_entropy
+
+    # information gain is the difference between total entropy and summed weighted entropy
+    gain = total_entropy - weighted_entropy_sum
+    return gain
+
+# Example data
+x = [
+    [1, 0, 1],
+    [0, 1, 0],
+    [0, 0, 1],
+    [1, 1, 0],
+    [0, 1, 1]
+]
+
+y = [1, 0, 0, 1, 0]
+
+# Calculate the information gain for the first feature, index 0
+gain = information_gain(x, y, 0)
+print("Information Gain:", gain)
+```
+
+For testing the functions with pytest, you can create a separate file `test_decision_tree.py` and paste the following code:
+
+```python
+import pytest
+from decision_tree import entropy, information_gain
+
+def test_entropy():
+    assert entropy([1, 1, 0, 0]) == 1.0
+    assert entropy([1, 1, 1, 1]) == 0.0
+    assert pytest.approx(entropy([1, 0, 1, 0, 0]), abs=1e-6) == 0.97095
+
+def test_information_gain():
+    x = [
+        [1, 0, 1],
+        [0, 1, 0],
+        [0, 0, 1],
+        [1, 1, 0],
+        [0, 1, 1]
+    ]
+    y = [1, 0, 0, 1, 0]
+
+    assert pytest.approx(information_gain(x, y, 0), abs=1e-6) == 0.01997
+    assert pytest.approx(information_gain(x, y, 1), abs=1e-6) == 0.41997
+    assert pytest.approx(information_gain(x, y, 2), abs=1e-6) == 0.01997
+```
+
+To run the tests, simply execute the `pytest` command in your terminal after installing pytest with pip:
+
+```
+pip install pytest
+pytest
+```

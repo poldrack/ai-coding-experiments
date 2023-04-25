@@ -1,0 +1,40 @@
+Here's the Python code to calculate the torque on an object:
+
+```python
+import math
+
+def torque(force, distance, angle):
+    """
+    Calculate the torque on an object given the force, the distance from the pivot
+    point, and the angle between the force and the lever arm.
+
+    :param force: The force applied to the object (in Newtons).
+    :param distance: The distance from the pivot point to the point where the force is applied (in meters).
+    :param angle: The angle in degrees between the force and the lever arm.
+    :return: The torque on the object (in Newton-meters).
+    """
+    angle_in_radians = math.radians(angle)
+    return force * distance * math.sin(angle_in_radians)
+
+# Example values
+force = 50  # Newtons
+distance = 2  # meters
+angle = 30  # degrees
+
+torque_value = torque(force, distance, angle)
+print(f"The torque on the object is {torque_value:.2f} Nm")
+```
+
+Here are the pytest tests to ensure the correctness of the functions:
+
+```python
+import pytest
+from torque_calculator import torque
+
+def test_torque():
+    assert pytest.approx(torque(50, 2, 30), 0.0001) == 50.0
+    assert pytest.approx(torque(50, 2, 0), 0.0001) == 0.0
+    assert pytest.approx(torque(50, 2, 180), 0.0001) == 0.0
+    assert pytest.approx(torque(50, 2, 90), 0.0001) == 100.0
+    assert pytest.approx(torque(100, 3, 45), 0.0001) == 212.1320
+```

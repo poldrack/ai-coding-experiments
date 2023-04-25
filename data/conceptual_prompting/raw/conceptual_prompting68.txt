@@ -1,0 +1,52 @@
+Here is the Python function to compute the wavelength of a photon, given its energy and Planck's constant:
+
+```python
+import scipy.constants
+
+def compute_wavelength(energy, plancks_constant=scipy.constants.Planck):
+    """
+    Compute the wavelength of a photon given its energy and Plancks constant.
+
+    :param energy: The energy of the photon (in Joules).
+    :type energy: float
+    :param plancks_constant: The Planck's constant (default: scipy.constants.Planck)
+    :type plancks_constant: float
+    :return: The wavelength of the photon (in meters).
+    :rtype: float
+    """
+    speed_of_light = scipy.constants.speed_of_light
+
+    wavelength = (plancks_constant * speed_of_light) / energy
+    return wavelength
+```
+
+Here is a set of pytest tests to exercise the `compute_wavelength` function:
+
+```python
+import pytest
+import scipy.constants
+from wavelength import compute_wavelength
+
+def test_compute_wavelength_positive_energy():
+    energy = 4.135667696e-15  # Example energy value in Joules
+    computed_wavelength = compute_wavelength(energy)
+    expected_wavelength = 4.804351820101201e-07  # Expected wavelength in meters
+    assert pytest.approx(computed_wavelength) == expected_wavelength
+
+def test_compute_wavelength_with_custom_plancks_constant():
+    energy = 4.135667696e-15  # Example energy value in Joules
+    custom_plancks_constant = 6.62607015e-34  # Example custom Planck's constant in Js
+    computed_wavelength = compute_wavelength(energy, custom_plancks_constant)
+    expected_wavelength = 4.804351820101201e-07  # Expected wavelength in meters
+    assert pytest.approx(computed_wavelength) == expected_wavelength
+
+def test_compute_wavelength_invalid_energy():
+    energy = -4.135667696e-15  # Example invalid energy value (negative) in Joules
+    with pytest.raises(ValueError):
+        compute_wavelength(energy)
+```
+
+Please save the code in separate files and run pytest from your terminal:
+- Save the first code block in a file named "wavelength.py"
+- Save the second code block in a file named "test_wavelength.py"
+- Run `pytest test_wavelength.py` in your terminal

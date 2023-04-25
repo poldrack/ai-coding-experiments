@@ -1,0 +1,49 @@
+Here's the Python function to calculate the net present value (NPV) of an investment:
+
+```python
+def npv(cash_flows, discount_rate, initial_investment):
+    """
+    Calculate the net present value of an investment given a series of cash flows, a discount rate, and an initial investment.
+    
+    :param cash_flows: List of cash flows where the index represents the period (e.g., cash_flows[0] is for period 1)
+    :param discount_rate: The discount rate to be applied to the cash flows to bring them to present value
+    :param initial_investment: The initial investment made at time zero
+    :return: The net present value of the investment
+    """
+    pv_cash_flows = [cf / (1 + discount_rate)**(i + 1) for i, cf in enumerate(cash_flows)]
+    return sum(pv_cash_flows) - initial_investment
+```
+
+Now, here are some pytest tests to exercise the functions:
+
+```python
+import pytest
+from npv_calculation import npv
+
+def test_npv_basic():
+    cash_flows = [1000, 2000, 3000]
+    discount_rate = 0.10
+    initial_investment = 4000
+    expected_npv = 1892.344498
+  
+    result = npv(cash_flows, discount_rate, initial_investment)
+    assert round(result, 6) == pytest.approx(expected_npv)
+
+def test_npv_zero_discount_rate():
+    cash_flows = [1000, 2000, 3000]
+    discount_rate = 0
+    initial_investment = 4000
+    expected_npv = 2000
+  
+    result = npv(cash_flows, discount_rate, initial_investment)
+    assert round(result, 6) == pytest.approx(expected_npv)
+
+def test_negative_cash_flows():
+    cash_flows = [1000, -2000, 3000]
+    discount_rate = 0.05
+    initial_investment = 2000
+    expected_npv = 506.331674
+
+    result = npv(cash_flows, discount_rate, initial_investment)
+    assert round(result, 6) == pytest.approx(expected_npv)
+```

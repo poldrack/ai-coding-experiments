@@ -1,0 +1,43 @@
+I have prepared a Python program for you to calculate the potential energy stored in a spring. Here it is:
+
+```python
+def potential_energy(spring_constant, displacement):
+    """
+    This function calculates the potential energy stored in a spring.
+    :param spring_constant: spring's spring constant (k) in N/m
+    :param displacement: displacement from equilibrium position (x) in meters
+    :return: potential energy (PE) in joules
+    """
+    return 0.5 * spring_constant * (displacement ** 2)
+
+
+def main():
+    spring_constant = 100  # Spring constant (k) in N/m
+    displacement = 0.1  # Displacement from equilibrium position (x) in meters
+
+    # Calculate and display the potential energy
+    pe = potential_energy(spring_constant, displacement)
+    print(f"The potential energy stored in the spring is {pe} joules.")
+
+
+if __name__ == '__main__':
+    main()
+```
+
+The first function, `potential_energy`, calculates the potential energy stored in a spring based on the given spring constant and displacement. The `main` function sets values for the spring constant and displacement, and then calls the `potential_energy` function to find the potential energy. Finally, the potential energy is printed to the console.
+
+Here is a set of pytest tests to exercise the `potential_energy` function:
+
+```python
+import pytest
+from spring_potential_energy import potential_energy
+
+def test_potential_energy():
+    assert potential_energy(100, 0.1) == 0.5
+    assert potential_energy(200, 0.2) == 4.0
+    assert potential_energy(50, 0.5) == 6.25
+    assert potential_energy(0, 0.3) == 0.0
+    assert potential_energy(100, 0) == 0.0
+```
+
+To use these tests, you should save the main program in a file called `spring_potential_energy.py`, install pytest, and then run the tests using the `pytest` command.

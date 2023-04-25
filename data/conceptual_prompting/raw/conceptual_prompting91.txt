@@ -1,0 +1,71 @@
+Here's a Python program that calculates the total mechanical energy of an object in a conservative system:
+
+```python
+def kinetic_energy(mass, velocity):
+    """
+    Calculate the kinetic energy of an object.
+
+    :param mass: float, mass of the object (kg)
+    :param velocity: float, velocity of the object (m/s)
+    :return: float, kinetic energy (Joules)
+    """
+    return 0.5 * mass * velocity ** 2
+
+
+def potential_energy(mass, height, gravity=9.81):
+    """
+    Calculate the potential energy of an object.
+
+    :param mass: float, mass of the object (kg)
+    :param height: float, height of the object (m)
+    :param gravity: float, acceleration due to gravity (m/s^2), default is 9.81 (Earth)
+    :return: float, potential energy (Joules)
+    """
+    return mass * gravity * height
+
+
+def total_mechanical_energy(ke, pe):
+    """
+    Calculate the total mechanical energy in a conservative system.
+
+    :param ke: float, kinetic energy (Joules)
+    :param pe: float, potential energy (Joules)
+    :return: float, total mechanical energy (Joules)
+    """
+    return ke + pe
+
+
+if __name__ == "__main__":
+    mass = 10  # kg
+    velocity = 5  # m/s
+    height = 3  # m
+
+    ke = kinetic_energy(mass, velocity)
+    pe = potential_energy(mass, height)
+    tme = total_mechanical_energy(ke, pe)
+
+    print(f"Kinetic Energy: {ke} J")
+    print(f"Potential Energy: {pe} J")
+    print(f"Total Mechanical Energy: {tme} J")
+```
+
+Here's a set of pytest tests for the functions above:
+
+```python
+import pytest
+from your_module import kinetic_energy, potential_energy, total_mechanical_energy
+
+def test_kinetic_energy():
+    assert kinetic_energy(10, 5) == pytest.approx(125)
+
+def test_potential_energy():
+    assert potential_energy(10, 3) == pytest.approx(294.3)
+
+def test_total_mechanical_energy():
+    assert total_mechanical_energy(125, 294.3) == pytest.approx(419.3)
+
+if __name__ == "__main__":
+    pytest.main()
+```
+
+Make sure to replace `your_module` with the name of the Python script containing the mechanical energy related functions.

@@ -1,0 +1,53 @@
+I will first write a Python function to calculate the resilience of an ecosystem. The resilience of an ecosystem can be calculated using the formula:
+
+`resilience = recovery_rate / (recovery_rate + disturbance_frequency)`
+
+where `recovery_rate` and `disturbance_frequency` are positive values.
+
+Here's the code for the function:
+
+```python
+def ecosystem_resilience(recovery_rate, disturbance_frequency):
+    """
+    Calculate the resilience of an ecosystem.
+
+    Args:
+        recovery_rate (float): The recovery rate of the ecosystem.
+        disturbance_frequency (float): The disturbance frequency in the ecosystem.
+
+    Returns:
+        float: The calculated resilience of the ecosystem.
+    """
+    if recovery_rate < 0 or disturbance_frequency < 0:
+        raise ValueError("Recovery rate and disturbance frequency must be positive values.")
+    
+    resilience = recovery_rate / (recovery_rate + disturbance_frequency)
+    
+    return resilience
+```
+
+Now, let's generate a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from ecosystem_resilience import ecosystem_resilience
+
+def test_ecosystem_resilience_normal_conditions():
+    assert ecosystem_resilience(2, 1) == 2 / (2 + 1)
+    assert ecosystem_resilience(3, 3) == 3 / (3 + 3)
+    assert ecosystem_resilience(5, 3) == 5 / (5 + 3)
+
+def test_ecosystem_resilience_zero_values():
+    assert ecosystem_resilience(0, 1) == 0
+    assert ecosystem_resilience(1, 0) == 1
+
+def test_ecosystem_resilience_negative_values():
+    with pytest.raises(ValueError):
+        ecosystem_resilience(-2, 1)
+    with pytest.raises(ValueError):
+        ecosystem_resilience(1, -1)
+    with pytest.raises(ValueError):
+        ecosystem_resilience(-2, -1)
+```
+
+Save the first code block in a file named `ecosystem_resilience.py`, and the second code block in a file named `test_ecosystem_resilience.py`. To run the tests, make sure you have pytest installed (`pip install pytest`) and execute `pytest test_ecosystem_resilience.py`.

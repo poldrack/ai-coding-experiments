@@ -1,0 +1,90 @@
+I will provide you with a Python function that implements the backtracking algorithm for solving the N-queens problem. Here's the code block for the main implementation:
+
+```python
+def is_safe(board, row, col, n):
+    # Check in the current row
+    for i in range(col):
+        if board[row][i] == 1:
+            return False
+
+    # Check upper diagonal
+    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
+        if board[i][j] == 1:
+            return False
+
+    # Check lower diagonal
+    for i, j in zip(range(row, n, 1), range(col, -1, -1)):
+        if board[i][j] == 1:
+            return False
+
+    return True
+
+
+def n_queens_helper(board, col, n):
+    if col >= n:
+        return True
+
+    for row in range(n):
+        if is_safe(board, row, col, n):
+            board[row][col] = 1
+
+            if n_queens_helper(board, col + 1, n):
+                return True
+
+            board[row][col] = 0
+
+    return False
+
+
+def n_queens(n):
+    board = [[0 for _ in range(n)] for _ in range(n)]
+
+    if not n_queens_helper(board, 0, n):
+        return "Solution does not exist"
+
+    return board
+```
+
+Here's the code block for the pytest test cases:
+
+```python
+import pytest
+from n_queens import n_queens, is_safe, n_queens_helper
+
+def test_is_safe():
+    board = [
+        [0, 0, 1, 0],
+        [1, 0, 0, 0],
+        [0, 0, 0, 1],
+        [0, 1, 0, 0]
+    ]
+    assert is_safe(board, 2, 2, 4) == False
+    assert is_safe(board, 3, 3, 4) == False
+    assert is_safe(board, 1, 1, 4) == False
+    assert is_safe(board, 0, 0, 4) == True
+
+def test_n_queens_helper():
+    board = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]
+    ]
+    assert n_queens_helper(board, 0, 4) == True
+    assert n_queens_helper(board, 1, 4) == False
+
+def test_n_queens():
+    result = n_queens(4)
+    expected = [
+        [0, 0, 1, 0],
+        [1, 0, 0, 0],
+        [0, 0, 0, 1],
+        [0, 1, 0, 0]
+    ]
+    assert result == expected
+
+    result = n_queens(3)
+    assert result == "Solution does not exist"
+```
+
+Make sure to save the main implementation in a file called `n_queens.py` and the test cases in a file called `test_n_queens.py`. To run the tests, you'll need to have pytest installed, and then you can execute `pytest test_n_queens.py` in your terminal.

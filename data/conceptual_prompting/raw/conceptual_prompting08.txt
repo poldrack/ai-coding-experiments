@@ -1,0 +1,65 @@
+I can provide you with a function for calculating Big O of common algorithms. However, it is important to note that determining the time complexity of an arbitrary algorithm is not possible through code alone. Time complexity depends a lot on the logic of the algorithm, requiring manual analysis to determine the growth of an algorithm in respect to its input size.
+
+Below is the code for a function that returns the Big O time complexity of some common algorithms:
+
+```python
+def big_o(algorithm_type, input_size):   
+    """
+    Returns the Big O time complexity of some common algorithms.
+    
+    Args:
+    algorithm_type (str): the type of algorithm, such as "linear" or "quadratic"
+    input_size (int): the size of the input for the algorithm
+    
+    Returns:
+    int: the calculated Big O complexity for the given algorithm type and input size
+    """
+
+    if algorithm_type == "constant":
+        return 1
+    elif algorithm_type == "linear":
+        return input_size
+    elif algorithm_type == "quadratic":
+        return input_size ** 2
+    elif algorithm_type == "cubic":
+        return input_size ** 3
+    elif algorithm_type == "logarithmic":
+        import math
+        return int(math.log2(input_size))
+    elif algorithm_type == "linearithmic":
+        import math
+        return input_size * int(math.log2(input_size))
+    else:
+        raise ValueError("Unsupported algorithm type")
+```
+
+Here are pytest tests for each function:
+
+```python
+import pytest
+from big_o_notation import big_o
+
+def test_big_o_constant():
+    assert big_o("constant", 100) == 1
+
+def test_big_o_linear():
+    assert big_o("linear", 100) == 100
+
+def test_big_o_quadratic():
+    assert big_o("quadratic", 100) == 10000
+
+def test_big_o_cubic():
+    assert big_o("cubic", 10) == 1000
+
+def test_big_o_logarithmic():
+    assert big_o("logarithmic", 8) == 3
+
+def test_big_o_linearithmic():
+    assert big_o("linearithmic", 16) == 64
+
+def test_big_o_unsupported_algorithm():
+    with pytest.raises(ValueError, match="Unsupported algorithm type"):
+        big_o("unsupported", 100)
+```
+
+Before running the tests, make sure to save the provided function in a file called `big_o_notation.py`, then you can run the tests using the `pytest` command.

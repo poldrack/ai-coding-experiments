@@ -1,0 +1,77 @@
+Here's a simple Python program to simulate predator-prey interactions using the Lotka-Volterra equations:
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def lotka_volterra_function(state, t, alpha, beta, gamma, delta):
+    x, y = state
+    dxdt = alpha * x - beta * x * y
+    dydt = -gamma * y + delta * x * y
+    return np.array([dxdt, dydt])
+
+def simulate_predator_prey(initial_population, timesteps, alpha, beta, gamma, delta):
+    state = np.zeros((timesteps, 2))
+    state[0] = initial_population
+    dt = 1
+
+    for t in range(1, timesteps):
+        state[t] = state[t - 1] + dt * lotka_volterra_function(state[t - 1], t, alpha, beta, gamma, delta)
+
+    return state
+
+def plot_simulation(state):
+    plt.figure()
+    plt.plot(state[:, 0], label='Prey')
+    plt.plot(state[:, 1], label='Predator')
+    plt.legend()
+    plt.xlabel('Time')
+    plt.ylabel('Population')
+    plt.show()
+
+if __name__ == '__main__':
+    initial_population = np.array([40, 9])
+    timesteps = 200
+    alpha = 1.1
+    beta = 0.4
+    gamma = 0.4
+    delta = 0.1
+    
+    state = simulate_predator_prey(initial_population, timesteps, alpha, beta, gamma, delta)
+    plot_simulation(state)
+```
+
+Now, let's create a set of pytest tests that exercise each of the functions:
+
+```python
+import numpy as np
+import pytest
+from predator_prey_simulation import lotka_volterra_function, simulate_predator_prey
+
+def test_lotka_volterra_function():
+    state = np.array([50, 10])
+    t = 1
+    alpha = 1.1
+    beta = 0.4
+    gamma = 0.4
+    delta = 0.1
+    expected = np.array([45., -30.])
+    np.testing.assert_array_almost_equal(lotka_volterra_function(state, t, alpha, beta, gamma, delta), expected)
+
+def test_simulate_predator_prey():
+    initial_population = np.array([40, 9])
+    timesteps = 3
+    alpha = 1.1
+    beta = 0.4
+    gamma = 0.4
+    delta = 0.1
+    expected = np.array([[ 40.,   9.],
+                         [ 44.,   5.6],
+                         [ 47.84,  3.472]])
+    np.testing.assert_array_almost_equal(simulate_predator_prey(initial_population, timesteps, alpha, beta, gamma, delta), expected)
+
+if __name__ == '__main__':
+    pytest.main([__file__])
+```
+
+Just save the first code block as `predator_prey_simulation.py` and the second code block as `test_predator_prey_simulation.py` and run `pytest test_predator_prey_simulation.py` in the terminal/command prompt to execute the tests.

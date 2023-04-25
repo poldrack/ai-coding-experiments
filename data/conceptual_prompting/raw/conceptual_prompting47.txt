@@ -1,0 +1,60 @@
+Here is a Python implementation of the longest common subsequence using dynamic programming:
+
+```python
+def longest_common_subsequence(X: str, Y: str) -> str:
+    """
+    Compute the longest common subsequence of two given strings using dynamic programming.
+
+    :param X: string X
+    :param Y: string Y
+    :return: longest common subsequence of X and Y
+    """
+    m = len(X)
+    n = len(Y)
+
+    # Create a table to store lengths of longest common suffixes of substrings
+    L = [[0] * (n + 1) for _ in range(m + 1)]
+
+    # Fill L[m][n] in bottom-up fashion
+    for i in range(m + 1):
+        for j in range(n + 1):
+            if i == 0 or j == 0:
+                L[i][j] = 0
+            elif X[i - 1] == Y[j - 1]:
+                L[i][j] = L[i - 1][j - 1] + 1
+            else:
+                L[i][j] = max(L[i - 1][j], L[i][j - 1])
+
+    # Reconstruct the LCS from the L table
+    result = ""
+    i, j = m, n
+    while i > 0 and j > 0:
+        if X[i - 1] == Y[j - 1]:
+            result = X[i - 1] + result
+            i -= 1
+            j -= 1
+        elif L[i - 1][j] > L[i][j - 1]:
+            i -= 1
+        else:
+            j -= 1
+
+    return result
+```
+
+And here are some pytest tests for the function:
+
+```python
+import pytest
+from lcs import longest_common_subsequence
+
+
+@pytest.mark.parametrize("X,Y,result", [
+    ("", "", ""),
+    ("ABCDGH", "AEDFHR", "ADH"),
+    ("AGGTAB", "GXTXAYB", "GTAB"),
+    ("abcdefghijklm", "nopqrstuvwxyz", ""),
+    ("ANALYSIS", "SYSTEM", "SYS")
+])
+def test_longest_common_subsequence(X, Y, result):
+    assert longest_common_subsequence(X, Y) == result
+```

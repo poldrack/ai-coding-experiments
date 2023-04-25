@@ -1,0 +1,42 @@
+Here is the Python function to calculate the price elasticity of demand:
+
+```python
+def price_elasticity_of_demand(percent_change_quantity_demanded, percent_change_price):
+    """
+    Calculate the price elasticity of demand.
+
+    Arguments:
+    percent_change_quantity_demanded -- percentage change in quantity demanded
+    percent_change_price -- percentage change in price
+
+    Returns:
+    Price elasticity of demand
+    """
+    if percent_change_price == 0:
+        raise ValueError("Percentage change in price cannot be 0")
+
+    price_elasticity = percent_change_quantity_demanded / percent_change_price
+    return price_elasticity
+```
+
+Here are some pytest tests to exercise the function:
+
+```python
+import pytest
+from your_module import price_elasticity_of_demand
+
+def test_positive_elasticity():
+    assert price_elasticity_of_demand(-10, 5) == -2
+
+def test_negative_elasticity():
+    assert price_elasticity_of_demand(5, 5) == 1
+
+def test_inelastic_demand():
+    assert price_elasticity_of_demand(-5, 20) == -0.25
+
+def test_division_by_zero():
+    with pytest.raises(ValueError):
+        price_elasticity_of_demand(5, 0)
+```
+
+Make sure to replace `your_module` in the pytest tests with the name of the file where the `price_elasticity_of_demand` function is defined.

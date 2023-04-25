@@ -1,0 +1,119 @@
+Here's a Python implementation of the Bellman-Ford algorithm:
+
+```python
+# Bellman-Ford Algorithm for finding single-source shortest paths
+# in a weighted graph with negative weights.
+
+def initialize(graph, source):
+    """
+    Initialize distance and predecessor dictionaries for the graph.
+    """
+    distance, predecessor = {}, {}
+    for node in graph:
+        # Set initial distances to infinity for all nodes except the source.
+        distance[node] = float('inf')
+        predecessor[node] = None
+    distance[source] = 0
+    return distance, predecessor
+
+
+def bellman_ford(graph, source):
+    """
+    Finds the shortest path in a weighted graph with negative weights.
+    """
+    distance, predecessor = initialize(graph, source)
+
+    # Relax the edges |V| - 1 times.
+    for _ in range(len(graph) - 1):
+        for u in graph:
+            for v, weight in graph[u]:
+                new_distance = distance[u] + weight
+                if new_distance < distance[v]:
+                    distance[v] = new_distance
+                    predecessor[v] = u
+
+    # Check for negative cycles.
+    for u in graph:
+        for v, weight in graph[u]:
+            if distance[u] + weight < distance[v]:
+                raise ValueError("Graph contains a negative-weight cycle")
+
+    return distance, predecessor
+
+
+def main():
+    # Create a sample weighted graph represented by an adjacency list.
+    graph = {
+        'a': [('b', -1), ('c', 4)],
+        'b': [('c', 3), ('d', 2), ('e', 2)],
+        'c': [],
+        'd': [('b', 1), ('c', 5)],
+        'e': [('d', -3)],
+    }
+
+    # Find the single-source shortest paths using Bellman-Ford algorithm.
+    distance, predecessor = bellman_ford(graph, 'a')
+
+    # Print shortest distance from the source (a) to all other nodes.
+    print("Shortest distances from the source:", distance)
+
+    # Print the predecessor of each node on the shortest path.
+    print("Predecessor nodes in the shortest path:", predecessor)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+Now, for the pytest tests:
+
+```python
+import pytest
+from bellman_ford import initialize, bellman_ford
+
+def test_initialize():
+    graph = {'a': [('b', 1)], 'b': [('a', 1)]}
+    distance, predecessor = initialize(graph, 'a')
+    assert distance == {'a': 0, 'b': float('inf')}
+    assert predecessor == {'a': None, 'b': None}
+
+def test_bellman_ford_no_negative_weights():
+    graph = {
+        'a': [('b', 2), ('c', 7)],
+        'b': [('c', 3), ('d', 4)],
+        'c': [('d', 1)],
+        'd': [],
+    }
+    distance, predecessor = bellman_ford(graph, 'a')
+    assert distance == {'a': 0, 'b': 2, 'c': 5, 'd': 6}
+    assert predecessor == {'a': None, 'b': 'a', 'c': 'b', 'd': 'c'}
+
+def test_bellman_ford_negative_weights():
+    graph = {
+        'a': [('b', -1), ('c', 4)],
+        'b': [('c', 3), ('d', 2), ('e', 2)],
+        'c': [],
+        'd': [('b', 1), ('c', 5)],
+        'e': [('d', -3)],
+    }
+    distance, predecessor = bellman_ford(graph, 'a')
+    assert distance == {'a': 0, 'b': -1, 'c': 2, 'd': -2, 'e': 1}
+    assert predecessor == {'a': None, 'b': 'a', 'c': 'b', 'd': 'e', 'e': 'b'}
+
+def test_bellman_ford_negative_cycles():
+    graph = {
+        'a': [('b', -1), ('c', 4)],
+        'b': [('c', 3), ('d', 2), ('e', 2)],
+        'c': [],
+        'd': [('b', 1), ('c', 5)],
+        'e': [('d', -5)],
+    }
+    with pytest.raises(ValueError, match="Graph contains a negative-weight cycle"):
+        _ = bellman_ford(graph, 'a')
+```
+
+Make sure to save the Bellman-Ford implementation in a separate file named `bellman_ford.py` and the tests in another file named `test_bellman_ford.py`. Then run the tests using:
+
+```
+pytest test_bellman_ford.py
+```

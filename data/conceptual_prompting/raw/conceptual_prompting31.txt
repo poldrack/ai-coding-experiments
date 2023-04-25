@@ -1,0 +1,77 @@
+Here is a Python code implementing the energy flow through a food web:
+
+```python
+import random
+
+# Example parameters
+trophic_levels = {
+    'producers': 1,
+    'primary_consumers': 2,
+    'secondary_consumers': 3,
+    'tertiary_consumers': 4
+}
+
+energy_transfer_efficiencies = {
+    'producers_to_primary': 0.10,
+    'primary_to_secondary': 0.15,
+    'secondary_to_tertiary': 0.07
+}
+
+primary_production_rate = 1000  # in kcal/m^2/year
+
+def energy_flow(primary_production_rate, trophic_levels, energy_transfer_efficiencies):
+    energy_levels = {}
+    energy_levels[trophic_levels['producers']] = primary_production_rate
+    energy_levels[trophic_levels['primary_consumers']] = energy_transfer(primary_production_rate, energy_transfer_efficiencies['producers_to_primary'])
+    energy_levels[trophic_levels['secondary_consumers']] = energy_transfer(energy_levels[trophic_levels['primary_consumers']], energy_transfer_efficiencies['primary_to_secondary'])
+    energy_levels[trophic_levels['tertiary_consumers']] = energy_transfer(energy_levels[trophic_levels['secondary_consumers']], energy_transfer_efficiencies['secondary_to_tertiary'])
+
+    return energy_levels
+
+def energy_transfer(energy_in, efficiency):
+    return energy_in * efficiency
+
+energy_flow_result = energy_flow(primary_production_rate, trophic_levels, energy_transfer_efficiencies)
+print(energy_flow_result)
+```
+
+This code defines a food web, trophic levels, and energy transfer efficiencies. The `energy_flow()` function, computes the energy flow in each trophic level using the `energy_transfer()` function.
+
+Here is a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from energy_flow import energy_flow, energy_transfer
+
+@pytest.mark.parametrize("energy_in, efficiency, expected_result", [
+    (1000, 0.10, 100),
+    (2000, 0.15, 300),
+    (500, 0.50, 250),
+    (1200, 0.05, 60),
+])
+def test_energy_transfer(energy_in, efficiency, expected_result):
+    assert energy_transfer(energy_in, efficiency) == expected_result
+
+trophic_levels_example = {
+    'producers': 1,
+    'primary_consumers': 2,
+    'secondary_consumers': 3,
+    'tertiary_consumers': 4
+}
+
+energy_transfer_efficiencies_example = {
+    'producers_to_primary': 0.10,
+    'primary_to_secondary': 0.15,
+    'secondary_to_tertiary': 0.07
+}
+
+def test_energy_flow():
+    energy_flow_result = energy_flow(1000, trophic_levels_example, energy_transfer_efficiencies_example)
+    
+    assert energy_flow_result[1] == 1000
+    assert energy_flow_result[2] == 100
+    assert energy_flow_result[3] == 15
+    assert energy_flow_result[4] == 1.05
+```
+
+The test suite uses pytest and includes test cases for the `energy_transfer()` function and a test for the `energy_flow()` function with example parameters.

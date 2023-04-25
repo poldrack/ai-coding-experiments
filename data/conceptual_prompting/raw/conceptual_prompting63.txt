@@ -1,0 +1,47 @@
+Here's the Python code to compute the entropy of a probability distribution:
+
+```python
+import math
+
+def entropy(prob_dist):
+    """
+    Compute the entropy of a probability distribution.
+
+    :param prob_dist: List of probabilities that represents the distribution.
+    :return: Entropy of the given probability distribution.
+    """
+    return -sum(p * math.log2(p) for p in prob_dist if p > 0)
+
+def main():
+    prob_dist = [0.5, 0.25, 0.25]
+    print(f"Entropy of the given distribution: {entropy(prob_dist):.4f}")
+
+if __name__ == "__main__":
+    main()
+```
+
+And here are some pytest tests for the function:
+
+```python
+import pytest
+from entropy import entropy
+
+def test_entropy_zeros():
+    prob_dist = [0, 0, 0]
+    assert entropy(prob_dist) == 0
+
+def test_entropy_uniform():
+    prob_dist = [0.25, 0.25, 0.25, 0.25]
+    assert entropy(prob_dist) == 2
+
+def test_entropy_binary():
+    prob_dist = [0.4, 0.6]
+    assert pytest.approx(entropy(prob_dist), 0.9709)
+
+def test_entropy_invalid_distribution():
+    prob_dist = [0.2, 0.3, 0.6]
+    with pytest.raises(ValueError):
+        entropy(prob_dist)
+```
+
+Please ensure that you have `pytest` installed in your Python environment. You can install it using `pip install pytest` if you don't have it already. To run the tests, save the code in separate files as `entropy.py` (for main code) and `test_entropy.py` (for tests) and run `pytest test_entropy.py`.

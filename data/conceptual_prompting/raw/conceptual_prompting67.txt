@@ -1,0 +1,67 @@
+Here's a Python implementation of depth-first search (DFS) traversal on a given graph. The graph is represented using adjacency lists:
+
+```python
+class Graph:
+    def __init__(self, vertices):
+        self.graph = dict()
+        for vertex in vertices:
+            self.graph[vertex] = set()
+
+    def add_edge(self, u, v):
+        self.graph[u].add(v)
+        self.graph[v].add(u)
+
+    def dfs(self, start_vertex, visited=set()):
+        visited.add(start_vertex)
+        print(start_vertex, end=' ')
+
+        for neighbor in self.graph[start_vertex]:
+            if neighbor not in visited:
+                self.dfs(neighbor, visited)
+
+def main():
+    vertices = ['A', 'B', 'C', 'D', 'E', 'F']
+    graph = Graph(vertices)
+    graph.add_edge('A', 'B')
+    graph.add_edge('A', 'C')
+    graph.add_edge('B', 'D')
+    graph.add_edge('B', 'E')
+    graph.add_edge('C', 'F')
+
+    print("Depth-first search traversal for the given graph:")
+    graph.dfs('A')
+
+if __name__ == '__main__':
+    main()
+```
+
+Following is a pytest test suite for the implementation:
+
+```python
+import pytest
+from dfs import Graph
+
+def test_graph_init():
+    graph = Graph(['A', 'B', 'C'])
+    assert graph.graph == {'A': set(), 'B': set(), 'C': set()}
+
+def test_add_edge():
+    graph = Graph(['A', 'B', 'C'])
+    graph.add_edge('A', 'B')
+    graph.add_edge('B', 'C')
+    assert graph.graph == {'A': {'B'}, 'B': {'A', 'C'}, 'C': {'B'}}
+
+def test_dfs(capsys):
+    graph = Graph(['A', 'B', 'C', 'D', 'E', 'F'])
+    graph.add_edge('A', 'B')
+    graph.add_edge('A', 'C')
+    graph.add_edge('B', 'D')
+    graph.add_edge('B', 'E')
+    graph.add_edge('C', 'F')
+
+    graph.dfs('A')
+    captured = capsys.readouterr()
+    assert captured.out == "A B D E C F "
+```
+
+Save the first code block as `dfs.py`, and the second code block, which tests the implementation, should be saved as `test_dfs.py`. To run the tests, simply run `pytest` in the terminal.

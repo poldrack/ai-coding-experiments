@@ -1,0 +1,71 @@
+Here's a Python implementation for a two-sample t-test to compare the means of two populations:
+
+```python
+import numpy as np
+import scipy.stats
+
+def t_test_two_samples(sample1, sample2, alpha=0.05):
+    """
+    This function performs a two-sample t-test to compare the means of two populations.
+
+    Parameters:
+    - sample1: List or NumPy array of numeric values for the first population
+    - sample2: List or NumPy array of numeric values for the second population
+    - alpha (optional): The significance level, default is 0.05 (5%)
+    
+    Returns:
+    - t_stat: Computed t-statistic
+    - p_value: Computed p-value
+    - reject_null: True if null hypothesis is rejected (means are different), otherwise False
+    """
+    # Compute t-statistic and two-tailed p-value using the Scipy library
+    t_stat, p_value = scipy.stats.ttest_ind(sample1, sample2)
+
+    # Determine if the null hypothesis should be rejected
+    reject_null = p_value < alpha
+
+    return t_stat, p_value, reject_null
+
+# Example usage with random samples
+np.random.seed(42)  # set seed for reproducibility
+sample1 = np.random.normal(loc=50, scale=5, size=100)
+sample2 = np.random.normal(loc=53, scale=5, size=100)
+
+t_stat, p_value, reject_null = t_test_two_samples(sample1, sample2)
+
+print("t-statistic:", t_stat)
+print("p-value:", p_value)
+print("Reject null hypothesis (means are different):", reject_null)
+```
+
+And here are some pytest tests to exercise each function:
+
+```python
+import pytest
+import numpy as np
+from your_module import t_test_two_samples
+
+def test_t_test_two_samples():
+    np.random.seed(42)  # set seed for reproducibility
+    sample1 = np.random.normal(loc=50, scale=5, size=100)
+    sample2 = np.random.normal(loc=53, scale=5, size=100)
+
+    t_stat, p_value, reject_null = t_test_two_samples(sample1, sample2)
+
+    assert round(t_stat, 2) == -4.18
+    assert round(p_value, 8) == 0.00005533
+    assert reject_null is True
+
+    # Same distribution
+    sample3 = np.random.normal(loc=50, scale=5, size=100)
+
+    t_stat, p_value, reject_null = t_test_two_samples(sample1, sample3)
+
+    assert p_value > 0.05
+    assert reject_null is False
+
+if __name__ == "__main__":
+    pytest.main([__file__])
+```
+
+Replace `from your_module import t_test_two_samples` with the appropriate import according to your project structure.

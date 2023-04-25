@@ -1,0 +1,110 @@
+Here is the Python code implementing a simple Naive Bayes classifier for text classification:
+
+```python
+import numpy as np
+from collections import defaultdict
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+class NaiveBayesClassifier:
+    def __init__(self):
+        self.word_counts = defaultdict(int)
+        self.class_counts = defaultdict(int)
+
+    def _tokenize(self, X):
+        vectorizer = CountVectorizer()
+        return vectorizer.fit_transform(X)
+
+    def _calculate_prior(self, y):
+        total_classes = len(y)
+        for label in y:
+            self.class_counts[label] += 1
+
+        for label, count in self.class_counts.items():
+            self.class_counts[label] = count / total_classes
+
+    def _calculate_word_probabilities(self, X, y):
+        for label in np.unique(y):
+            word_count = X[y == label].sum(axis=0) + 1
+            total_word_count = word_count.sum()
+            self.word_counts[label] = word_count / total_word_count
+
+    def fit(self, X_train, y_train):
+        X_train_tokenized = self._tokenize(X_train)
+        self._calculate_prior(y_train)
+        self._calculate_word_probabilities(X_train_tokenized, y_train)
+
+    def predict(self, X_test):
+        X_test_tokenized = self._tokenize(X_test)
+        predictions = []
+
+        for text in X_test_tokenized:
+            class_scores = {}
+            for label, word_probs in self.word_counts.items():
+                class_scores[label] = self.class_counts[label] * np.prod(np.power(word_probs, text))
+                
+            predicted_class = max(class_scores, key=class_scores.get)
+            predictions.append(predicted_class)
+
+        return np.array(predictions)
+
+samples = [
+    "The movie was excellent",
+    "I did not like the movie",
+    "Great movie, I loved it",
+    "The film was boring",
+    "Fantastic film, I would watch it again",
+    "I would not recommend watching the film"
+]
+
+labels = np.array([1, 0, 1, 0, 1, 0])
+
+X_train, X_test, y_train, y_test = train_test_split(samples, labels, test_size=0.33, random_state=42)
+
+classifier = NaiveBayesClassifier()
+classifier.fit(X_train, y_train)
+predictions = classifier.predict(X_test)
+print(f"Accuracy: {accuracy_score(y_test, predictions)}")
+```
+
+Here are the pytest tests for the Naive Bayes classifier:
+
+```python
+import pytest
+from nb_classifier import NaiveBayesClassifier
+import numpy as np
+
+@pytest.fixture
+def classifier():
+    return NaiveBayesClassifier()
+
+def test_tokenize(classifier):
+    tokenized_sample = classifier._tokenize(["I love movies.
+    "])
+    assert tokenized_sample.shape[0] == 1, "Tokenize should have 1 row"
+
+def test_calculate_prior(classifier):
+    labels = np.array([1, 0, 1, 0, 1, 0])
+    classifier._calculate_prior(labels)
+    assert set(classifier.class_counts.keys()) == {0, 1}, "Class_counts keys should contain both 0 and 1"
+    assert abs(classifier.class_counts[0] - 0.5) < 1e-6, "Class_count value for label 0 should be close to 0.5"
+    assert abs(classifier.class_counts[1] - 0.5) < 1e-6, "Class_count value for label 1 should be close to 0.5"
+
+def test_fit(classifier):
+    samples = ["The movie was excellent", "I did not like the movie", "Great movie, I loved it"]
+    labels = np.array([1, 0, 1])
+    classifier.fit(samples, labels)
+    assert set(classifier.word_counts.keys()) == {0, 1}, "Word_counts keys should contain both 0 and 1"
+
+def test_predict(classifier):
+    samples = ["The movie was excellent", "I did not like the movie", "Great movie, I loved it"]
+    labels = np.array([1, 0, 1])
+    classifier.fit(samples, labels)
+    predictions = classifier.predict(["The movie was boring"])
+    assert isinstance(predictions, np.ndarray), "Predictions should be a numpy array"
+    assert predictions.shape[0] == 1, "Predictions should have 1 element"
+    assert predictions[0] == 0, "The predicted class for 'The movie was boring' should be 0"
+```
+
+Save the classifier code in a file named `nb_classifier.py` and the tests in a file named `test_nb_classifier.py` in the same directory. Run the tests using `pytest`.

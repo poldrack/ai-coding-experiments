@@ -1,0 +1,126 @@
+Here's a Python program implementing the A* search algorithm for a 2D grid:
+
+```python
+import heapq
+
+class Node:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.neighbors = []
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __repr__(self):
+        return f"Node({self.x}, {self.y})"
+
+    def add_neighbors(self, grid):
+        if self.x > 0:
+            self.neighbors.append(grid[self.x - 1][self.y])
+        if self.x < len(grid)-1:
+            self.neighbors.append(grid[self.x + 1][self.y])
+        if self.y > 0:
+            self.neighbors.append(grid[self.x][self.y - 1])
+        if self.y < len(grid[0])-1:
+            self.neighbors.append(grid[self.x][self.y + 1])
+
+def create_grid(width, height):
+    return [[Node(x, y) for y in range(height)] for x in range(width)]
+
+def heuristic_cost_estimate(node, goal_node):
+    return abs(node.x - goal_node.x) + abs(node.y - goal_node.y)
+
+def reconstruct_path(came_from, current):
+    path = [current]
+    while current in came_from:
+        current = came_from[current]
+        path.append(current)
+    return path[::-1]
+
+def a_star_search(grid, start, goal):
+    start_node = grid[start[0]][start[1]]
+    goal_node = grid[goal[0]][goal[1]]
+
+    for row in grid:
+        for node in row:
+            node.add_neighbors(grid)
+
+    open_set = []
+    heapq.heappush(open_set, (0, start_node))
+    g_score = {node: float("inf") for row in grid for node in row}
+    g_score[start_node] = 0
+    f_score = {node: float("inf") for row in grid for node in row}
+    f_score[start_node] = heuristic_cost_estimate(start_node, goal_node)
+
+    came_from = {}
+
+    while open_set:
+        current = heapq.heappop(open_set)[1]
+
+        if current == goal_node:
+            return reconstruct_path(came_from, current)
+
+        for neighbor in current.neighbors:
+            tentative_g_score = g_score[current] + 1
+
+            if tentative_g_score < g_score[neighbor]:
+                came_from[neighbor] = current
+                g_score[neighbor] = tentative_g_score
+                f_score[neighbor] = tentative_g_score + heuristic_cost_estimate(neighbor, goal_node)
+                heapq.heappush(open_set, (f_score[neighbor], neighbor))
+
+    return None
+
+if __name__ == '__main__':
+    grid = create_grid(10, 10)
+    start = (0, 0)
+    goal = (9, 9)
+
+    path = a_star_search(grid, start, goal)
+    print(path)
+```
+
+Here's a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from astar import Node, create_grid, heuristic_cost_estimate, reconstruct_path, a_star_search
+
+def test_node_equality():
+    n1 = Node(1, 2)
+    n2 = Node(1, 2)
+    assert n1 == n2
+
+def test_create_grid():
+    grid = create_grid(5, 4)
+    assert len(grid) == 5
+    assert len(grid[0]) == 4
+    assert isinstance(grid[2][3], Node)
+
+def test_heuristic_cost_estimate():
+    start = Node(1, 1)
+    goal = Node(4, 5)
+    assert heuristic_cost_estimate(start, goal) == 7
+
+def test_reconstruct_path():
+    grid = create_grid(3, 3)
+
+    came_from = {grid[2][1]: grid[1][1], grid[1][1]: grid[0][1], grid[0][1]: grid[0][0]}
+    current = grid[2][1]
+    path = reconstruct_path(came_from, current)
+
+    assert path == [grid[0][0], grid[0][1], grid[1][1], grid[2][1]]
+
+def test_a_star_search():
+    grid = create_grid(10, 10)
+    start = (0, 0)
+    goal = (9, 9)
+
+    path = a_star_search(grid, start, goal)
+
+    assert path[0] == grid[0][0]
+    assert path[-1] == grid[9][9]
+```
+
+To run the tests, save the A* search code in a file named `astar.py` and the tests in a file named `test_astar.py`. Then, run `pytest test_astar.py`.

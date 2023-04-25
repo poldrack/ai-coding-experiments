@@ -1,0 +1,63 @@
+Here's the Python code to calculate the gravitational force between two objects using their masses and the distance between them:
+
+```python
+import math
+
+def gravitational_force(m1, m2, r):
+    """
+    Calculate the gravitational force between two objects.
+    
+    Parameters:
+    m1 (float): Mass of first object in kilograms
+    m2 (float): Mass of second object in kilograms
+    r (float): Distance between the two objects in meters
+
+    Returns:
+    float: Gravitational force between the two objects in Newtons
+    """
+    G = 6.67430e-11  # Universal gravitational constant in m^3 kg^-1 s^-2
+    force = G * m1 * m2 / (r ** 2)
+    return force
+
+if __name__ == "__main__":
+    mass_earth = 5.972e24  # Mass of Earth in kg
+    mass_moon = 7.342e22  # Mass of Moon in kg
+    distance_earth_moon = 384400000  # Distance between Earth and Moon in m
+
+    force = gravitational_force(mass_earth, mass_moon, distance_earth_moon)
+    print(f"Gravitational force between Earth and Moon: {force} N")
+```
+
+Here's the pytest test suite for the given code:
+
+```python
+import pytest
+from gravitational_force import gravitational_force
+
+def test_gravitational_force():
+    mass_earth = 5.972e24
+    mass_moon = 7.342e22
+    distance_earth_moon = 384400000
+    expected_force = 1.982e20
+
+    # Test the function with Earth and Moon examples
+    result = gravitational_force(mass_earth, mass_moon, distance_earth_moon)
+    assert pytest.approx(result) == expected_force
+
+    # Test the function with equal masses and distance
+    m1 = m2 = 1e3
+    r = 10
+    expected_force = 6.67430e-11
+
+    result = gravitational_force(m1, m2, r)
+    assert pytest.approx(result) == expected_force
+
+    # Test the function with zero masses
+    m1 = 0
+    m2 = 5e3
+    r = 100
+    expected_force = 0
+
+    result = gravitational_force(m1, m2, r)
+    assert pytest.approx(result) == expected_force
+```

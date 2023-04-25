@@ -1,0 +1,64 @@
+Here's a Python code to calculate the compound interest earned on an investment:
+
+```python
+def compound_interest(principal, rate, time, frequency):
+    """
+    Calculate compound interest given principal, rate, time, and frequency of compounding.
+
+    :param principal: Initial investment amount
+    :param rate: Interest rate (in decimals, e.g., 0.05 for 5%)
+    :param time: Number of years for the investment
+    :param frequency: Number of times interest is compounded per year
+    :return: Total amount after interest
+    """
+    total_amount = principal * (1 + rate / frequency)**(frequency * time)
+    return total_amount
+
+def interest_earned(total_amount, principal):
+    """
+    Calculate interest earned given total amount and principal.
+
+    :param total_amount: Total amount after interest
+    :param principal: Initial investment amount
+    :return: Interest earned
+    """
+    interest = total_amount - principal
+    return interest
+
+# Example usage
+principal = 5000
+rate = 0.05
+time = 10
+frequency = 12
+
+total_amount = compound_interest(principal, rate, time, frequency)
+interest = interest_earned(total_amount, principal)
+
+print("Total amount:", round(total_amount, 2))
+print("Interest earned:", round(interest, 2))
+```
+
+Here's a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+
+from compound_interest import compound_interest, interest_earned
+
+def test_compound_interest():
+    principal = 5000
+    rate = 0.05
+    time = 10
+    frequency = 12
+    total_amount = compound_interest(principal, rate, time, frequency)
+    assert round(total_amount, 2) == 8235.05
+
+def test_interest_earned():
+    total_amount = 8235.05
+    principal = 5000
+    interest = interest_earned(total_amount, principal)
+    assert round(interest, 2) == 3235.05
+
+if __name__ == "__main__":
+    pytest.main(["-v"])
+```

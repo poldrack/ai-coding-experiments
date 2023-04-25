@@ -1,0 +1,101 @@
+Here's the Python code to perform hierarchical clustering on a given dataset using the `scipy` and `matplotlib` libraries. The dataset is assumed to be a 2D numpy array.
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage
+
+# Sample dataset
+data = np.array([[0.1, 2.5],
+                 [1.5, 4.1],
+                 [2.0, 5.5],
+                 [3.5, 4.8],
+                 [4.1, 3.0],
+                 [5.5, 0.8],
+                 [6.1, 1.5]])
+
+def hierarchical_clustering(data, method='single'):
+    """
+    Perform hierarchical clustering on the given dataset using the specified method.
+    
+    Parameters:
+    data (numpy.ndarray): The dataset on which to perform clustering.
+    method (str): The clustering method to be used: ('single', 'complete', 'average', 'ward')
+
+    Returns:
+    Z (numpy.ndarray): The hierarchical clustering encoded as a linkage matrix.
+    """
+    if method not in ['single', 'complete', 'average', 'ward']:
+        raise ValueError("Invalid method. Supported methods are: 'single', 'complete', 'average', 'ward'")
+    
+    Z = linkage(data, method)
+    return Z
+
+def plot_dendrogram(Z, labels=None):
+    """
+    Plots a dendrogram for the given linkage matrix, Z.
+
+    Parameters:
+    Z (numpy.ndarray): The linkage matrix.
+    labels (list): The labels to use for the leaf nodes.
+
+    Returns:
+    None
+    """
+    fig, ax = plt.subplots(figsize=(10, 5))
+    dendrogram(Z, labels=labels, ax=ax)
+    plt.show()
+
+# Hierarchical clustering and visualization
+Z = hierarchical_clustering(data, method='ward')
+plot_dendrogram(Z)
+```
+
+This code implements a simple hierarchical clustering using the `scipy.cluster.hierarchy` library, and takes a 2D numpy array as input.
+
+Now, here's a set of pytest tests that exercise each of the functions:
+
+```python
+import numpy as np
+import pytest
+from scipy.spatial.distance import pdist
+from scipy.cluster.hierarchy import linkage
+
+@pytest.fixture
+def sample_data():
+    return np.array([[0.1, 2.5],
+                     [1.5, 4.1],
+                     [2.0, 5.5],
+                     [3.5, 4.8],
+                     [4.1, 3.0],
+                     [5.5, 0.8],
+                     [6.1, 1.5]])
+
+def test_hierarchical_clustering(sample_data):
+    # Test invalid method argument
+    with pytest.raises(ValueError):
+        hierarchical_clustering(sample_data, method="invalid")
+
+    # Test results with the ward method
+    Z_ward = hierarchical_clustering(sample_data, method="ward")
+    Z_expected = linkage(pdist(sample_data), method="ward")
+    np.testing.assert_almost_equal(Z_ward, Z_expected)
+
+    # Test results with the single method
+    Z_single = hierarchical_clustering(sample_data, method="single")
+    Z_expected = linkage(pdist(sample_data), method="single")
+    np.testing.assert_almost_equal(Z_single, Z_expected)
+
+    # Test results with the complete method
+    Z_complete = hierarchical_clustering(sample_data, method="complete")
+    Z_expected = linkage(pdist(sample_data), method="complete")
+    np.testing.assert_almost_equal(Z_complete, Z_expected)
+
+    # Test results with the average method
+    Z_average = hierarchical_clustering(sample_data, method="average")
+    Z_expected = linkage(pdist(sample_data), method="average")
+    np.testing.assert_almost_equal(Z_average, Z_expected)
+
+# No need to write tests for plot_dendrogram since it's a plotting function and doesn't have any calculations to test
+```
+Please make sure to have the required libraries (`numpy`, `scipy` and `matplotlib`) installed to run the code.

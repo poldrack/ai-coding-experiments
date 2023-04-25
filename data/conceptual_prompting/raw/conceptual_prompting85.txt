@@ -1,0 +1,66 @@
+Here's a simple and modular code to calculate the diffraction angle for light through a single slit:
+
+```python
+import math
+
+# Default values for wavelength, slit_width, and screen_distance in meters.
+DEFAULT_WAVELENGTH = 6.3e-7
+DEFAULT_SLIT_WIDTH = 0.001
+DEFAULT_SCREEN_DISTANCE = 1.0
+
+def diffraction_angle(wavelength, slit_width, screen_distance):
+    """
+    Compute the diffraction angle of light through a single slit.
+
+    Args:
+        wavelength (float): Wavelength of light in meters.
+        slit_width (float): Width of the slit in meters.
+        screen_distance (float): Distance from the slit to the screen in meters.
+    
+    Returns:
+        float: The diffraction angle in radians.
+    """
+    angle = math.asin(wavelength / slit_width)
+
+    if screen_distance > 0:
+        return angle
+    else:
+        raise ValueError("The distance to the screen must be greater than 0.")
+
+# Example usage
+angle = diffraction_angle(DEFAULT_WAVELENGTH, DEFAULT_SLIT_WIDTH, DEFAULT_SCREEN_DISTANCE)
+print(f"Diffraction angle: {angle:.10f} radians")
+```
+
+Here's a set of pytest tests for this code:
+
+```python
+import pytest
+from diffraction_angle_calculator import diffraction_angle
+
+def test_diffraction_angle():
+    wavelength = 6.3e-7
+    slit_width = 0.001
+    screen_distance = 1.0
+
+    angle = diffraction_angle(wavelength, slit_width, screen_distance)
+    assert round(angle, 10) == 0.0006300000
+
+def test_invalid_screen_distance():
+    wavelength = 6.3e-7
+    slit_width = 0.001
+    screen_distance = 0
+
+    with pytest.raises(ValueError, match="The distance to the screen must be greater than 0"):
+        diffraction_angle(wavelength, slit_width, screen_distance)
+
+def test_large_screen_distance():
+    wavelength = 6.3e-7
+    slit_width = 0.001
+    screen_distance = 100.0
+
+    angle = diffraction_angle(wavelength, slit_width, screen_distance)
+    assert round(angle, 10) == 0.0006300000
+```
+
+Make sure to save the function in a file named `diffraction_angle_calculator.py` for the tests to work since the tests import the function from that file.

@@ -1,0 +1,76 @@
+Here's a Python function implementing the ideal gas law:
+
+```python
+def ideal_gas_pressure(volume, temperature, moles):
+    """
+    Calculate the pressure exerted by a gas using the ideal gas law.
+
+    :param volume: The volume of the gas in liters (L)
+    :param temperature: The temperature of the gas in Kelvin (K)
+    :param moles: The amount of substance (moles) of the gas (n)
+    :return: The pressure of the gas in Pascals (Pa)
+    """
+    R = 8.3145  # Ideal gas constant in J/(mol·K)
+
+    # Convert volume from liters to cubic meters
+    volume_m3 = volume * 0.001
+
+    # Calculate pressure using ideal gas law (P = nRT/V)
+    pressure = (moles * R * temperature) / volume_m3
+
+    return pressure
+
+
+# Example usage
+v = 22.4  # Volume in liters (1 mole of an ideal gas at STP)
+t = 273.15  # Temperature in Kelvin (STP)
+n = 1  # Number of moles
+
+pressure = ideal_gas_pressure(v, t, n)
+print(f"The pressure exerted by the gas is {pressure:.2f} Pa")
+```
+
+Here are some pytest tests to check the correctness of the implementation:
+
+```python
+import pytest
+from ideal_gas_pressure import ideal_gas_pressure
+
+
+def test_zero_volume():
+    with pytest.raises(ZeroDivisionError):
+        ideal_gas_pressure(0, 273.15, 1)
+
+
+def test_negative_volume():
+    with pytest.raises(ValueError):
+        ideal_gas_pressure(-1, 273.15, 1)
+
+
+def test_zero_temperature():
+    with pytest.raises(ValueError):
+        ideal_gas_pressure(22.4, 0, 1)
+
+
+def test_negative_temperature():
+    with pytest.raises(ValueError):
+        ideal_gas_pressure(22.4, -273.15, 1)
+
+
+def test_zero_moles():
+    assert ideal_gas_pressure(22.4, 273.15, 0) == 0
+
+
+def test_negative_moles():
+    with pytest.raises(ValueError):
+        ideal_gas_pressure(22.4, 273.15, -1)
+
+
+def test_ideal_gas_law():
+    v = 22.4  # Volume in liters (1 mole of an ideal gas at STP)
+    t = 273.15  # Temperature in Kelvin (1 mole of an ideal gas at STP)
+    n = 1  # Number of moles
+
+    pressure = ideal_gas_pressure(v, t, n)
+    assert round(pressure) == 101325  # Standard atmospheric pressure in Pascals (Pa)
+```

@@ -1,0 +1,53 @@
+Here is the Python code to calculate the velocity of an object in circular motion, given the radius and the time period of the motion:
+
+```python
+import math
+
+def calculate_velocity(radius, time_period):
+    """
+    Calculate the velocity of an object in circular motion.
+
+    Args:
+    radius (float): The radius of the circular path (in meters)
+    time_period (float): The time period of one complete revolution (in seconds)
+
+    Returns:
+    float: The velocity of the object (in meters per second)
+    """
+    circumference = 2 * math.pi * radius
+    velocity = circumference / time_period
+    return velocity
+
+# Example usage:
+radius = 5.0  # meters
+time_period = 10.0  # seconds
+velocity = calculate_velocity(radius, time_period)
+print(f"The velocity of the object is {velocity} m/s")
+```
+
+And here is a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from circular_motion import calculate_velocity
+
+def test_calculate_velocity():
+    radius = 5.0
+    time_period = 10.0
+    assert pytest.approx(calculate_velocity(radius, time_period), 3.1416)
+
+    radius = 10.0
+    time_period = 20.0
+    assert pytest.approx(calculate_velocity(radius, time_period), 3.1416)
+
+    radius = 0.0
+    time_period = 1.0
+    assert pytest.approx(calculate_velocity(radius, time_period), 0.0000)
+
+    radius = 5.0
+    time_period = 0.0
+    with pytest.raises(ZeroDivisionError):
+        calculate_velocity(radius, time_period)
+```
+
+Before running the pytest tests, save the Python code in a file named `circular_motion.py` and the tests in a separate file named `test_circular_motion.py`. Then, to run the tests, simply execute the command `pytest` in the terminal.

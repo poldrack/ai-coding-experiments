@@ -1,0 +1,68 @@
+Here's the Python function to estimate the ecological footprint of human activities along with comments to explain each part of the code:
+
+```python
+def ecological_footprint(consumption_rates, biocapacity):
+    """
+    Estimate the ecological footprint of human activities.
+
+    Args:
+    consumption_rates (dict): A dictionary containing the consumption rates of resources. 
+                              Key: resource type; Value: consumption rate in global hectares (gha) per capita
+    biocapacity (float): The ecosystem's biocapacity in global hectares (gha) per capita
+
+    Returns:
+    float: The estimated ecological footprint in global hectares (gha) per capita
+    """
+    # Calculate the sum of the consumption rates for all resources
+    total_consumption = sum(consumption_rates.values())
+
+    # Calculate the ecological footprint by subtracting the biocapacity from the total consumption
+    ecological_footprint = total_consumption - biocapacity
+
+    return ecological_footprint
+```
+
+Here's an example of how you might use the function:
+
+```python
+consumption_rates_example = {
+    'cropland': 0.8,
+    'grazing_land': 0.4,
+    'forest_land': 0.6,
+    'fishing_ground': 0.3,
+    'built_up_land': 0.4,
+    'carbon': 1.5
+}
+
+biocapacity_example = 1.8
+
+result = ecological_footprint(consumption_rates_example, biocapacity_example)
+print(result)  # Output: 1.2
+```
+
+Next, here's a set of pytest tests that exercise the `ecological_footprint` function:
+
+```python
+import pytest
+from ecological_footprint_calculator import ecological_footprint
+
+def test_positive_ecological_footprint():
+    consumption_rates = {'cropland': 0.5, 'forest_land': 0.7, 'carbon': 1.7}
+    biocapacity = 2.5
+    assert ecological_footprint(consumption_rates, biocapacity) == 0.4
+
+def test_negative_ecological_footprint():
+    consumption_rates = {'cropland': 0.8, 'grazing_land': 0.4, 'fishing_ground': 0.3}
+    biocapacity = 2.0
+    assert ecological_footprint(consumption_rates, biocapacity) == -0.5
+
+def test_zero_ecological_footprint():
+    consumption_rates = {'carbon': 1.0, 'built_up_land': 0.5}
+    biocapacity = 1.5
+    assert ecological_footprint(consumption_rates, biocapacity) == 0.0
+
+def test_empty_consumption_rates():
+    consumption_rates = {}
+    biocapacity = 2.0
+    assert ecological_footprint(consumption_rates, biocapacity) == -2.0
+```

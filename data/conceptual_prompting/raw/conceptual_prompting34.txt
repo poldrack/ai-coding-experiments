@@ -1,0 +1,66 @@
+Here's a Python code to model the spread of an invasive species in an ecosystem:
+
+```python
+import random
+
+class InvasiveSpecies:
+    
+    def __init__(self, initial_population, growth_rate, dispersal_rate):
+        self.population = initial_population
+        self.growth_rate = growth_rate
+        self.dispersal_rate = dispersal_rate
+        
+    def grow_population(self):
+        self.population += int(self.population * self.growth_rate)
+        
+    def disperse_species(self):
+        dispersed_population = int(self.population * self.dispersal_rate)
+        self.population -= dispersed_population
+        return dispersed_population
+
+    def simulate_growth(self, steps):
+        results = []
+        for _ in range(steps):
+            self.grow_population()
+            dispersed_population = self.disperse_species()
+            results.append((self.population, dispersed_population))
+        return results
+
+initial_population = 100
+growth_rate = 0.5
+dispersal_rate = 0.1
+
+species = InvasiveSpecies(initial_population, growth_rate, dispersal_rate)
+simulation_steps = 10
+
+results = species.simulate_growth(simulation_steps)
+for step, (population, dispersed_population) in enumerate(results, start=1):
+    print(f"Step {step}: Population = {population}, Dispersed Population = {dispersed_population}")
+```
+
+Here's a set of pytest tests for each function in the InvasiveSpecies class:
+
+```python
+import pytest
+from invasive_species import InvasiveSpecies
+
+@pytest.fixture
+def species():
+    return InvasiveSpecies(100, 0.5, 0.1)
+
+def test_grow_population(species):
+    species.grow_population()
+    assert species.population == 150
+
+def test_disperse_species(species):
+    dispersed_population = species.disperse_species()
+    assert dispersed_population == 10
+    assert species.population == 90
+
+def test_simulate_growth(species):
+    results = species.simulate_growth(3)
+    assert len(results) == 3
+    assert results[0] == (135, 13)
+    assert results[1] == (185, 18)
+    assert results[2] == (251, 25)
+```

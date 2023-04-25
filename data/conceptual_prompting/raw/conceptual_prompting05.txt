@@ -1,0 +1,39 @@
+Here's the Python code to compute the real GDP growth rate, given the nominal GDP growth rate and the inflation rate:
+
+```python
+def real_gdp_growth_rate(nominal_gdp_growth_rate, inflation_rate):
+    """
+    Calculate the real GDP growth rate.
+    
+    :param nominal_gdp_growth_rate: Nominal GDP growth rate as a percentage.
+    :param inflation_rate: Inflation rate as a percentage.
+    :return: Real GDP growth rate as a percentage.
+    """
+    real_growth_rate = ((1 + nominal_gdp_growth_rate / 100) / (1 + inflation_rate / 100)) - 1
+    return real_growth_rate * 100
+
+# Example values
+nominal_gdp_growth_rate = 5  # 5% nominal GDP growth rate
+inflation_rate = 2  # 2% inflation rate
+
+# Calculate the real GDP growth rate
+real_growth_rate = real_gdp_growth_rate(nominal_gdp_growth_rate, inflation_rate)
+
+# Output the result
+print(f"The real GDP growth rate is {real_growth_rate:.2f}%")
+```
+
+Here's a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from real_gdp_growth import real_gdp_growth_rate
+
+def test_real_gdp_growth_rate():
+    assert round(real_gdp_growth_rate(5, 2), 2) == 2.94
+    assert round(real_gdp_growth_rate(7, 3), 2) == 3.88
+    assert round(real_gdp_growth_rate(10, 4), 2) == 5.77
+    assert round(real_gdp_growth_rate(0, 0), 2) == 0
+    assert round(real_gdp_growth_rate(-3, 1), 2) == -3.96
+
+```

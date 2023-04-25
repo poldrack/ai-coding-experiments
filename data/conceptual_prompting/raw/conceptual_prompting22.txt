@@ -1,0 +1,52 @@
+Here is the Python code to calculate the Marginal Propensity to Consume (MPC):
+
+```python
+def calculate_mpc(change_in_consumption, change_in_disposable_income):
+    """
+    Calculates the Marginal Propensity to Consume (MPC) using the formula:
+    MPC = Change in Consumption (ΔC) / Change in Disposable Income (ΔY)
+
+    Args:
+    change_in_consumption (float): Change in consumption.
+    change_in_disposable_income (float): Change in disposable income.
+
+    Returns:
+    float: Returns the Marginal Propensity to Consume.
+    """
+    if change_in_disposable_income == 0:
+        raise ValueError("Change in disposable income cannot be 0")
+
+    mpc = change_in_consumption / change_in_disposable_income
+    return mpc
+
+
+if __name__ == "__main__":
+    # Example values
+    change_in_consumption = 50
+    change_in_disposable_income = 100
+
+    mpc = calculate_mpc(change_in_consumption, change_in_disposable_income)
+    print(f"The Marginal Propensity to Consume is: {mpc}")
+```
+
+The following code block contains the `pytest` tests:
+
+```python
+import pytest
+from mpc_calculator import calculate_mpc
+
+def test_calculate_mpc_normal_case():
+    assert calculate_mpc(100, 200) == 0.5
+    assert calculate_mpc(-50, -100) == 0.5
+    assert calculate_mpc(40, 80) == 0.5
+
+def test_calculate_mpc_zero_disposable_income():
+    with pytest.raises(ValueError):
+        assert calculate_mpc(100, 0)
+
+def test_calculate_mpc_negative_mpc():
+    assert calculate_mpc(-25, 50) == -0.5
+    assert calculate_mpc(25, -50) == -0.5
+```
+
+Before running the tests, ensure that you have `pytest` installed (`pip install pytest`). Then, save the MPC calculation code in a Python file (e.g., `mpc_calculator.py`) and the tests in another Python file (e.g., `test_mpc_calculator.py`). Finally, use the command `pytest test_mpc_calculator.py` to execute the tests.

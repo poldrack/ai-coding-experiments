@@ -1,0 +1,70 @@
+Here's a Python function to model the supply and demand curves of a market:
+
+```python
+import numpy as np
+
+def supply_demand_model(price_elasticity_of_supply, price_elasticity_of_demand, equilibrium_price, equilibrium_quantity):
+    """
+    Function to model the supply and demand curves of a market.
+
+    Args:
+    price_elasticity_of_supply (float): The price elasticity of supply.
+    price_elasticity_of_demand (float): The price elasticity of demand.
+    equilibrium_price (float): The equilibrium price of the market.
+    equilibrium_quantity (float): The equilibrium quantity of the market.
+
+    Returns:
+    tuple: A tuple containing the supply and demand curve functions.
+    """
+
+    def supply_curve(price):
+        return equilibrium_quantity * (price / equilibrium_price) ** price_elasticity_of_supply
+
+    def demand_curve(price):
+        return equilibrium_quantity * (price / equilibrium_price) ** -price_elasticity_of_demand
+
+    return supply_curve, demand_curve
+
+# Example values
+price_elasticity_of_supply = 1.5
+price_elasticity_of_demand = 0.7
+equilibrium_price = 100
+equilibrium_quantity = 500
+
+supply_curve, demand_curve = supply_demand_model(price_elasticity_of_supply, price_elasticity_of_demand, equilibrium_price, equilibrium_quantity)
+
+prices = np.linspace(1, 200, 100)
+supply_values = [supply_curve(price) for price in prices]
+demand_values = [demand_curve(price) for price in prices]
+```
+
+Here's a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from supply_demand import supply_demand_model
+
+@pytest.fixture
+def example_curves():
+    price_elasticity_of_supply = 1.5
+    price_elasticity_of_demand = 0.7
+    equilibrium_price = 100
+    equilibrium_quantity = 500
+    supply_curve, demand_curve = supply_demand_model(price_elasticity_of_supply, price_elasticity_of_demand, equilibrium_price, equilibrium_quantity)
+    return supply_curve, demand_curve, equilibrium_price, equilibrium_quantity
+
+def test_supply_curve(example_curves):
+    supply_curve, _, equilibrium_price, equilibrium_quantity = example_curves
+    assert supply_curve(equilibrium_price) == equilibrium_quantity
+    assert supply_curve(equilibrium_price * 2) > equilibrium_quantity
+
+def test_demand_curve(example_curves):
+    _, demand_curve, equilibrium_price, equilibrium_quantity = example_curves
+    assert demand_curve(equilibrium_price) == equilibrium_quantity
+    assert demand_curve(equilibrium_price * 0.5) > equilibrium_quantity
+
+def test_supply_demand_equilibrium(example_curves):
+    supply_curve, demand_curve, equilibrium_price, equilibrium_quantity = example_curves
+    assert supply_curve(equilibrium_price) == demand_curve(equilibrium_price)
+    assert supply_curve(equilibrium_price) == equilibrium_quantity
+```

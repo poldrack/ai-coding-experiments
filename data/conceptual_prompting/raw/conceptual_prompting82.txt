@@ -1,0 +1,50 @@
+Here's the Python code for the Keynesian aggregate expenditure model:
+
+```python
+def consumption_function(consumption, marginal_propensity_to_consume, disposable_income):
+    return consumption + marginal_propensity_to_consume * disposable_income
+
+def aggregate_expenditure(consumption, investment, government_spending, net_exports):
+    return consumption + investment + government_spending + net_exports
+
+def keynesian_model(income, consumption, marginal_propensity_to_consume, investment, government_spending, net_exports):
+    disposable_income = income
+    total_consumption = consumption_function(consumption, marginal_propensity_to_consume, disposable_income)
+    total_expenditure = aggregate_expenditure(total_consumption, investment, government_spending, net_exports)
+    return total_expenditure
+
+# Example values
+income = 1000
+consumption = 200
+marginal_propensity_to_consume = 0.6
+investment = 150
+government_spending = 300
+net_exports = 50
+
+total_expenditure = keynesian_model(income, consumption, marginal_propensity_to_consume, investment, government_spending, net_exports)
+print("Total Expenditure:", total_expenditure)
+```
+
+And here's a set of pytest tests to test the functions:
+
+```python
+import pytest
+from keynesian_model import consumption_function, aggregate_expenditure, keynesian_model
+
+def test_consumption_function():
+    assert consumption_function(200, 0.6, 1000) == 800
+    assert consumption_function(100, 0.8, 500) == 500
+    assert consumption_function(300, 0.5, 1500) == 1050
+
+def test_aggregate_expenditure():
+    assert aggregate_expenditure(800, 150, 300, 50) == 1300
+    assert aggregate_expenditure(500, 100, 400, 30) == 1030
+    assert aggregate_expenditure(1050, 200, 500, 20) == 1770
+
+def test_keynesian_model():
+    assert keynesian_model(1000, 200, 0.6, 150, 300, 50) == 1300
+    assert keynesian_model(500, 100, 0.8, 100, 400, 30) == 1030
+    assert keynesian_model(1500, 300, 0.5, 200, 500, 20) == 1770
+```
+
+Save the tests in a separate file and run them with pytest. Make sure to import the necessary functions from the main code file to the test file.

@@ -1,0 +1,66 @@
+Here's a Python function to analyze the impact of habitat fragmentation on species populations:
+
+```python
+import math
+
+def habitat_size_to_species(area, z, c):
+    """
+    Calculates the number of species present in a habitat patch
+    using the species-area relationship (SAR).
+
+    SAR = c * A ** z
+
+    :param area: float, size of the habitat patch (A)
+    :param z: float, coefficient for the power-law relationship
+    :param c: float, proportional constant in the species-area relationship
+    :return: float, number of species (S)
+    """
+    return c * (area ** z)
+
+
+def total_species(habitat_sizes, z, c):
+    """
+    Calculates the total number of species in an array of habitat patches.
+
+    :param habitat_sizes: list of floats, array of habitat patch sizes
+    :param z: float, coefficient for the power-law relationship
+    :param c: float, proportional constant in the species-area relationship
+    :return: int, total number of species
+    """
+    species_counts = [habitat_size_to_species(area, z, c) for area in habitat_sizes]
+    return int(sum(species_counts))
+
+# Example usage
+habitat_sizes_example = [10, 20, 30, 40, 50]
+z_example = 0.2
+c_example = 10
+
+total_species_count = total_species(habitat_sizes_example, z_example, c_example)
+print(f"Total number of species in the example habitat patches: {total_species_count}")
+```
+
+Here is a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from habitat_fragmentation import habitat_size_to_species, total_species
+
+def test_habitat_size_to_species():
+    assert habitat_size_to_species(10, 0.2, 10) == 10 * (10 ** 0.2)
+    assert habitat_size_to_species(20, 0.15, 5) == 5 * (20 ** 0.15)
+
+
+def test_total_species():
+    habitat_sizes = [10, 20, 30, 40, 50]
+    z = 0.2
+    c = 10
+    assert total_species(habitat_sizes, z, c) == int(10 * (10 ** 0.2) + 10 * (20 ** 0.2) + 10 * (30 ** 0.2) + 10 * (40 ** 0.2) + 10 * (50 ** 0.2))
+
+    other_habitat_sizes = [5, 15, 25, 35, 45]
+    other_z = 0.15
+    other_c = 5
+    assert total_species(other_habitat_sizes, other_z, other_c) == int(5 * (5 ** 0.15) + 5 * (15 ** 0.15) + 5 * (25 ** 0.15) + 5 * (35 ** 0.15) + 5 * (45 ** 0.15))
+
+if __name__ == "__main__":
+    pytest.main()
+```

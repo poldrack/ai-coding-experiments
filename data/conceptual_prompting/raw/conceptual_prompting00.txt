@@ -1,0 +1,72 @@
+Here's a Python code to analyze the impact of human activities on nutrient cycling in an ecosystem:
+
+```python
+import random
+
+# Define rates of nutrient inputs, outputs, and internal cycling processes
+nutrient_input = random.uniform(10.0, 50.0)
+nutrient_output = random.uniform(5.0, 30.0)
+internal_cycling_rate = random.uniform(0.5, 4.0)
+
+# Function for human activity impact on nutrient input
+def human_impact_input(activity_rate: float) -> float:
+    return nutrient_input * (1 + activity_rate)
+
+# Function for human activity impact on nutrient output
+def human_impact_output(activity_rate: float) -> float:
+    return nutrient_output * (1 + activity_rate)
+
+# Function for human activity impact on internal cycling process
+def human_impact_internal_cycling(activity_rate: float) -> float:
+    return internal_cycling_rate * (1 - activity_rate)
+
+# Calculate the impact of human activities on nutrient cycling
+def nutrient_cycling_impact(input_rate: float, output_rate: float, cycling_rate: float) -> float:
+    new_input = human_impact_input(input_rate)
+    new_output = human_impact_output(output_rate)
+    new_cycling_rate = human_impact_internal_cycling(cycling_rate)
+    net_nutrient = (new_input - new_output) * new_cycling_rate
+    return net_nutrient
+
+
+# Example human_activity rates
+input_activity_rate = 0.1
+output_activity_rate = 0.2
+internal_cycling_activity_rate = 0.15
+
+# Calculate the impact
+impact = nutrient_cycling_impact(input_activity_rate, output_activity_rate, internal_cycling_activity_rate)
+print("The impact of human activities on nutrient cycling in the ecosystem is", impact)
+```
+
+Here's a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+
+def test_human_impact_input():
+    activity_rate = 0.5
+    assert human_impact_input(activity_rate) == nutrient_input * 1.5
+
+def test_human_impact_output():
+    activity_rate = 0.5
+    assert human_impact_output(activity_rate) == nutrient_output * 1.5
+
+def test_human_impact_internal_cycling():
+    activity_rate = 0.5
+    assert human_impact_internal_cycling(activity_rate) == internal_cycling_rate * 0.5
+
+def test_nutrient_cycling_impact():
+    input_rate = 0.25
+    output_rate = 0.25
+    cycling_rate = 0.25
+    new_input = human_impact_input(input_rate)
+    new_output = human_impact_output(output_rate)
+    new_cycling_rate = human_impact_internal_cycling(cycling_rate)
+    net_nutrient = (new_input - new_output) * new_cycling_rate
+    assert nutrient_cycling_impact(input_rate, output_rate, cycling_rate) == net_nutrient
+
+if __name__ == "__main__":
+    pytest.main()
+```
+To run the tests, save the test code block in a separate file (for example, `test_nutrient_cycling.py`) and run pytest. Remember to include the main code in the same directory or add it to PYTHONPATH.

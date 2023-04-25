@@ -1,0 +1,63 @@
+Here is the Python code to determine the electric field at a point in space due to a point charge:
+
+```python
+import math
+
+def electric_field(charge, distance):
+    """
+    Calculate the electric field at a point in space due to a point charge.
+
+    :param charge: float
+        Charge of the point charge in coulombs.
+    :param distance: float
+        Distance from the point to the charge in meters.
+    :return: electric field in N/C (newtons per coulomb)
+    """
+    k = 8.9875517923e9  # Coulomb's constant, N·m²/C²
+    electric_field = k * charge / (distance ** 2)
+    return electric_field
+
+# example usage
+q = 1e-6  # 1 microcoulomb
+d = 0.01  # 1 centimeter
+E = electric_field(q, d)
+print(f"Electric field due to a {q:.1e} C charge at a distance of {d} m: {E:.3e} N/C")
+```
+
+Here are the pytest tests:
+
+```python
+import pytest
+
+def test_electric_field():
+    q = 1e-6  # 1 microcoulomb
+    d = 0.01  # 1 centimeter
+    expected = 8.9875517923e9 * q / (d ** 2)
+    result = electric_field(q, d)
+    assert math.isclose(result, expected, rel_tol=1e-9)
+
+def test_zero_input():
+    q = 0
+    d = 1
+    expected = 0
+    result = electric_field(q, d)
+    assert result == expected
+
+def test_negative_charge():
+    q = -1e-6
+    d = 0.01
+    expected = 8.9875517923e9 * q / (d ** 2)
+    result = electric_field(q, d)
+    assert math.isclose(result, expected, rel_tol=1e-9)
+
+@pytest.mark.parametrize("q, d", [
+    (1e-6, -0.01),
+    (-1e-6, -0.01),
+])
+def test_negative_distance(q, d):
+    with pytest.raises(ValueError):
+        electric_field(q, d)
+
+if __name__ == "__main__":
+    pytest.main([__file__])
+```

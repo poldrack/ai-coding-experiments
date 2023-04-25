@@ -1,0 +1,101 @@
+Here's a Python implementation of the Breadth-First Search (BFS) algorithm to check if a given graph is bipartite:
+
+```python
+from collections import deque
+
+def check_bipartite(graph):
+    """
+    Function to check if a given graph is bipartite.
+    :param graph: Dictionary representing the graph.
+    :return: True if the graph is bipartite, False otherwise.
+    """
+    start_vertex = list(graph.keys())[0]
+    visited = set()
+    color = dict()
+
+    # Create a BFS queue and add the starting vertex with color 0.
+    bfs_queue = deque([(start_vertex, 0)])
+
+    # Process each vertex and its associated color until the BFS queue is empty.
+    while bfs_queue:
+        vertex, vertex_color = bfs_queue.popleft()
+        
+        if vertex not in visited:
+            visited.add(vertex)
+            color[vertex] = vertex_color
+
+            # Check adjacent vertices.
+            for neighbor in graph[vertex]:
+                if neighbor not in visited:
+                    bfs_queue.append((neighbor, 1 - vertex_color))
+                elif color[neighbor] == vertex_color:
+                    return False
+
+    return True
+
+
+def main():
+    graph = {
+        'A': ['B', 'C'],
+        'B': ['A', 'D'],
+        'C': ['A', 'D'],
+        'D': ['B', 'C'],
+        'E': ['F'],
+        'F': ['E']
+    }
+
+    is_bipartite = check_bipartite(graph)
+    print(f"Is the graph bipartite? {is_bipartite}")
+
+
+if __name__ == "__main__":
+    main()
+```
+
+And here are the pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from bipartite_graph import check_bipartite
+
+def test_check_bipartite_true():
+    graph1 = {
+        'A': ['B', 'C'],
+        'B': ['A', 'D'],
+        'C': ['A', 'D'],
+        'D': ['B', 'C'],
+        'E': ['F'],
+        'F': ['E']
+    }
+
+    graph2 = {
+        'A': ['B', 'C', 'D'],
+        'B': ['A', 'E'],
+        'C': ['A', 'E'],
+        'D': ['A', 'E'],
+        'E': ['B', 'C', 'D'],
+    }
+
+    assert check_bipartite(graph1) == True
+    assert check_bipartite(graph2) == True
+
+def test_check_bipartite_false():
+    graph1 = {
+        'A': ['B', 'C'],
+        'B': ['A', 'C', 'D'],
+        'C': ['A', 'B', 'D'],
+        'D': ['B', 'C']
+    }
+
+    graph2 = {
+        'A': ['B'],
+        'B': ['A', 'C'],
+        'C': ['B', 'D'],
+        'D': ['C', 'E'],
+        'E': ['D']
+    }
+
+    assert check_bipartite(graph1) == False
+    assert check_bipartite(graph2) == False
+```
+Make sure to save the implementation code in a file called `bipartite_graph.py` and the tests in a file called `test_bipartite_graph.py`. To run the tests, simply execute `pytest` in your command line.

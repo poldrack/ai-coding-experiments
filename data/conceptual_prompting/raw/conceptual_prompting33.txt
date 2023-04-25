@@ -1,0 +1,40 @@
+Here's the Python function to compute the Herfindahl-Hirschman Index (HHI) for market concentration, given the market shares of all firms in the market:
+
+```python
+def calculate_hhi(market_shares):
+    """
+    Calculate the Herfindahl-Hirschman Index (HHI) for market concentration.
+    
+    Args:
+        market_shares (list): A list of market shares for each firm, where each share is a float between 0 and 1.
+
+    Returns:
+        float: The HHI for the given market shares, rounded to 2 decimal places.
+    """
+    if not market_shares:
+        raise ValueError("Market shares cannot be empty")
+
+    hhi = sum([share * share for share in market_shares]) * 10000
+    return round(hhi, 2)
+```
+
+And here are some pytest tests to test this function:
+
+```python
+import pytest
+from hhi import calculate_hhi
+
+def test_calculate_hhi_valid_input():
+    market_shares = [0.5, 0.3, 0.2]
+    expected_hhi = 3800
+    assert calculate_hhi(market_shares) == expected_hhi
+
+def test_calculate_hhi_empty_market_shares():
+    with pytest.raises(ValueError):
+        calculate_hhi([])
+
+def test_calculate_hhi_single_firm():
+    market_shares = [1]
+    expected_hhi = 10000
+    assert calculate_hhi(market_shares) == expected_hhi
+```

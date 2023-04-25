@@ -1,0 +1,88 @@
+Here's a Python code to calculate consumer and producer surplus given supply and demand curves and the market price:
+
+```python
+import numpy as np
+
+
+def linear_function(x, a, b):
+    return a * x + b
+
+
+def inverse_demand(price, a, b):
+    """
+    Calculate the quantity demanded for a given price and inverse demand curve parameters a and b.
+    """
+    return (price - b) / a
+
+
+def inverse_supply(price, c, d):
+    """
+    Calculate the quantity supplied for a given price and inverse supply curve parameters c and d. 
+    """
+    return (price - d) / c
+
+
+def consumer_surplus(quantity, price, a, b):
+    """
+    Calculate the consumer surplus given the market quantity, price, and the demand curve parameters a and b.
+    """
+    demand_price = linear_function(quantity, a, b)
+    return 0.5 * abs(demand_price - price) * quantity
+
+
+def producer_surplus(quantity, price, c, d):
+    """
+    Calculate the producer surplus given the market quantity, price, and the supply curve parameters c and d.
+    """
+    supply_price = linear_function(quantity, c, d)
+    return 0.5 * abs(price - supply_price) * quantity
+
+
+# Demand curve parameters (a, b)
+demand_params = (-1, 20)
+
+# Supply curve parameters (c, d)
+supply_params = (1, 10)
+
+# Market price
+market_price = 15
+
+# Calculate market equilibrium quantity.
+market_quantity = inverse_demand(market_price, *demand_params)
+assert np.allclose(market_quantity, inverse_supply(market_price, *supply_params))
+
+# Calculate consumer surplus.
+cs = consumer_surplus(market_quantity, market_price, *demand_params)
+print(f"Consumer Surplus: {cs}")
+
+# Calculate producer surplus.
+ps = producer_surplus(market_quantity, market_price, *supply_params)
+print(f"Producer Surplus: {ps}")
+```
+
+Here's a set of pytest test cases:
+
+```python
+import pytest
+import numpy as np
+
+
+def test_linear_function():
+    assert np.allclose(linear_function(2, 3, 4), 10)
+
+
+def test_inverse_demand():
+    assert np.allclose(inverse_demand(20, -1, 30), 10)
+
+
+def test_inverse_supply():
+    assert np.allclose(inverse_supply(20, 1, 10), 10)
+
+
+def test_consumer_surplus():
+    assert np.allclose(consumer_surplus(10, 15, -1, 20), 25)
+
+
+def test_producer_surplus():
+    assert np.allclose(producer_surplus(10, 15, 1, 10), 25)
+```

@@ -1,0 +1,57 @@
+Here's the Python code to calculate the centripetal force acting on an object in circular motion:
+
+```python
+def centripetal_force(mass, velocity, radius):
+    """
+    Calculate the centripetal force acting on an object in circular motion.
+    
+    Args:
+    mass (float): Mass of the object in kg
+    velocity (float): Velocity of the object in m/s
+    radius (float): Radius of the circular path in meters
+    
+    Returns:
+    float: Centripetal force in Newtons
+    """
+    force = (mass * velocity**2) / radius
+    return force
+
+# Example: Mass = 5 kg, Velocity = 10 m/s, Radius = 2 meters
+mass = 5
+velocity = 10
+radius = 2
+
+centripetal_force_value = centripetal_force(mass, velocity, radius)
+print(f"Centripetal force: {centripetal_force_value} N")
+```
+
+Here's a set of pytest tests for the centripetal_force function:
+
+```python
+import pytest
+from centripetal_force_calculator import centripetal_force
+
+def test_positive_values():
+    result = centripetal_force(5, 10, 2)
+    assert result == 250
+
+def test_zero_mass():
+    result = centripetal_force(0, 10, 2)
+    assert result == 0
+
+def test_zero_velocity():
+    result = centripetal_force(5, 0, 2)
+    assert result == 0
+
+def test_negative_values():
+    with pytest.raises(ValueError):
+        centripetal_force(-5, 10, 2)
+
+    with pytest.raises(ValueError):
+        centripetal_force(5, -10, 2)
+
+    with pytest.raises(ValueError):
+        centripetal_force(5, 10, -2)
+```
+
+Remember to save the centripetal force calculation code in a file named `centripetal_force_calculator.py` and the pytest test code in a separate file named `test_centripetal_force_calculator.py`. You can then run the tests using the `pytest` command in your terminal.

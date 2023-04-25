@@ -1,0 +1,62 @@
+Here is the Python code to compute the speed of sound in a medium:
+
+```python
+import math
+
+def compute_speed_of_sound(bulk_modulus, density):
+    """
+    Compute the speed of sound in a medium.
+    
+    Args:
+        bulk_modulus (float): The bulk modulus of the medium (in Pa).
+        density (float): The density of the medium (in kg/m^3).
+        
+    Returns:
+        float: The speed of sound in the medium (in m/s).
+    """
+    return math.sqrt(bulk_modulus / density)
+
+# Example: Compute the speed of sound in water
+# Bulk modulus of water: 2.15e9 Pa (at 20 °C)
+# Density of water: 1000 kg/m³ (at 20 °C)
+water_bulk_modulus = 2.15e9
+water_density = 1000
+speed_of_sound_water = compute_speed_of_sound(water_bulk_modulus, water_density)
+print(f"Speed of sound in water: {speed_of_sound_water:.2f} m/s")
+```
+
+Here is a set of pytest tests for the `compute_speed_of_sound` function:
+
+```python
+import pytest
+from speed_of_sound import compute_speed_of_sound
+
+def test_compute_speed_of_sound():
+    # Test with known values for water
+    water_bulk_modulus = 2.15e9
+    water_density = 1000
+    speed_of_sound_water = compute_speed_of_sound(water_bulk_modulus, water_density)
+    assert pytest.approx(1463.14, abs=1e-2) == speed_of_sound_water
+
+    # Test with known values for air
+    air_bulk_modulus = 1.42e5
+    air_density = 1.225
+    speed_of_sound_air = compute_speed_of_sound(air_bulk_modulus, air_density)
+    assert pytest.approx(331.44, abs=1e-2) == speed_of_sound_air
+
+    # Test with custom values, speed should be greater than 0 unless bulk modulus or density is 0
+    custom_bulk_modulus = 5.0e8
+    custom_density = 1200
+    speed_of_sound_custom = compute_speed_of_sound(custom_bulk_modulus, custom_density)
+    assert speed_of_sound_custom > 0
+
+    # Test with 0 bulk modulus, speed should be 0
+    zero_bulk_modulus = 0
+    speed_of_sound_zero_bulk_modulus = compute_speed_of_sound(zero_bulk_modulus, custom_density)
+    assert speed_of_sound_zero_bulk_modulus == 0
+
+    # Test with 0 density, speed should be 0
+    zero_density = 0
+    speed_of_sound_zero_density = compute_speed_of_sound(custom_bulk_modulus, zero_density)
+    assert speed_of_sound_zero_density == 0
+```

@@ -1,0 +1,97 @@
+Here's a Python implementation of Kruskal's algorithm for finding the minimum spanning tree of an undirected graph.
+
+```python
+def kruskal(graph):
+    """
+    Find the minimum spanning tree of an undirected graph using Kruskal's algorithm.
+    
+    :param graph: A dictionary representing the adjacency list of the graph,
+                  where the keys are the nodes, and the values are lists of tuples
+                  with a neighboring node and the edge weight.
+    :return: A list of tuples representing the minimum spanning tree edges.
+    """
+    def find(parent, i):
+        if parent[i] == i:
+            return i
+        return find(parent, parent[i])
+
+    def union(parent, rank, x, y):
+        x_root = find(parent, x)
+        y_root = find(parent, y)
+
+        if rank[x_root] < rank[y_root]:
+            parent[x_root] = y_root
+        elif rank[x_root] > rank[y_root]:
+            parent[y_root] = x_root
+        else:
+            parent[y_root] = x_root
+            rank[x_root] += 1
+
+    nodes = list(graph.keys())
+    edges = []
+    for node in graph:
+        for neighbor, weight in graph[node]:
+            edges.append((node, neighbor, weight))
+
+    edges.sort(key=lambda x: x[2])
+
+    parent = {}
+    rank = {}
+
+    for node in nodes:
+        parent[node] = node
+        rank[node] = 0
+
+    mst = []
+
+    while len(mst) < len(nodes) - 1:
+        u, v, w = edges.pop(0)
+        u_root = find(parent, u)
+        v_root = find(parent, v)
+
+        if u_root != v_root:
+            mst.append((u, v, w))
+            union(parent, rank, u_root, v_root)
+
+    return mst
+```
+
+Here is a set of `pytest` tests to exercise the `kruskal` function:
+
+```python
+import pytest
+from kruskal import kruskal
+
+def test_kruskal_simple():
+    graph = {
+        0: [(1, 10), (2, 6), (3, 5)],
+        1: [(0, 10), (3, 15)],
+        2: [(0, 6), (3, 4)],
+        3: [(0, 5), (1, 15), (2, 4)]
+    }
+    mst = kruskal(graph)
+    assert sorted(mst) == [(0, 1, 10), (0, 3, 5), (2, 3, 4)]
+
+def test_kruskal_complex():
+    graph = {
+        'A': [('B', 7), ('D', 5)],
+        'B': [('A', 7), ('C', 8), ('D', 9), ('E', 7)],
+        'C': [('B', 8), ('E', 5)],
+        'D': [('A', 5), ('B', 9), ('E', 15), ('F', 6)],
+        'E': [('B', 7), ('C', 5), ('D', 15), ('F', 8), ('G', 9)],
+        'F': [('D', 6), ('E', 8), ('G', 11)],
+        'G': [('E', 9), ('F', 11)]
+    }
+    mst = kruskal(graph)
+    assert sorted(mst) == [('A', 'B', 7), ('A', 'D', 5), ('B', 'E', 7), ('C', 'E', 5), ('D', 'F', 6), ('E', 'G', 9)]
+
+def test_kruskal_single_edge():
+    graph = {0: [(1, 15)], 1: [(0, 15)]}
+    mst = kruskal(graph)
+    assert sorted(mst) == [(0, 1, 15)]
+
+def test_kruskal_no_edges():
+    graph = {0: [], 1: []}
+    mst = kruskal(graph)
+    assert sorted(mst) == []
+```

@@ -1,0 +1,32 @@
+Here's the Python function that models the population growth using the logistic growth equation:
+
+```python
+def logistic_growth(initial_population, carrying_capacity, growth_rate, time):
+    """
+    Calculate the population size at a given time using the logistic growth equation.
+    
+    :param initial_population: The initial population size (float or int)
+    :param carrying_capacity: The maximum population size the environment can support (float or int)
+    :param growth_rate: The intrinsic growth rate (float)
+    :param time: The time at which to evaluate the population growth (float or int)
+    :return: The population size at the given time (float)
+    """
+    population = carrying_capacity / (1 + ((carrying_capacity - initial_population) / initial_population) * (2 ** (-growth_rate * time)))
+    return population
+```
+
+Here's a set of pytest tests to exercise the function:
+```python
+import pytest
+from population_growth import logistic_growth
+
+
+@pytest.mark.parametrize("initial_population, carrying_capacity, growth_rate, time, expected_population", [
+    (1000, 2000, 0.5, 1, 1333.3333333333333),
+    (500, 3000, 0.25, 2, 836.7956749718554),
+    (1500, 5000, 0.75, 3, 2586.032629558541),
+])
+def test_logistic_growth(initial_population, carrying_capacity, growth_rate, time, expected_population):
+    result = logistic_growth(initial_population, carrying_capacity, growth_rate, time)
+    assert round(result, 2) == round(expected_population, 2)
+```

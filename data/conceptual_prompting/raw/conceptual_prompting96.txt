@@ -1,0 +1,69 @@
+Here is a Python program to calculate the consumer price index (CPI):
+
+```python
+def calculate_cpi(base_year_prices, current_year_prices):
+    """
+    Calculate the Consumer Price Index (CPI) given the base year and current year prices.
+    :param base_year_prices: A dictionary of items with their corresponding prices in the base year.
+    :param current_year_prices: A dictionary of items with their corresponding prices in the current year.
+    :return: Consumer Price Index (CPI) as a percentage.
+    """
+
+    base_year_index = sum(base_year_prices.values())
+    current_year_index = sum(current_year_prices.values())
+    cpi = (current_year_index / base_year_index) * 100
+    return cpi
+
+
+if __name__ == "__main__":
+    base_year_prices = {
+        "apple": 1.0,
+        "banana": 0.5,
+        "milk": 2.5,
+        "bread": 2.0
+    }
+    current_year_prices = {
+        "apple": 1.2,
+        "banana": 0.6,
+        "milk": 3.0,
+        "bread": 2.2
+    }
+
+    cpi = calculate_cpi(base_year_prices, current_year_prices)
+    print("The Consumer Price Index (CPI) is {:.2f}%.".format(cpi))
+```
+Here are the pytest tests to exercise each of the functions:
+
+```python
+import pytest
+from cpi_calculator import calculate_cpi
+
+
+def test_calculate_cpi():
+    base_year_prices = {
+        "apple": 1.0,
+        "banana": 0.5,
+        "milk": 2.5,
+        "bread": 2.0
+    }
+    current_year_prices_1 = {
+        "apple": 1.2,
+        "banana": 0.6,
+        "milk": 3.0,
+        "bread": 2.2
+    }
+    current_year_prices_2 = {
+        "apple": 1.4,
+        "banana": 0.7,
+        "milk": 3.5,
+        "bread": 3.0
+    }
+    
+    result_1 = calculate_cpi(base_year_prices, current_year_prices_1)
+    result_2 = calculate_cpi(base_year_prices, current_year_prices_2)
+
+    assert round(result_1, 2) == 116.00
+    assert round(result_2, 2) == 134.00
+```
+
+Don't forget to save the Python program in a file named `cpi_calculator.py` so that the pytest can import the `calculate_cpi` function properly.

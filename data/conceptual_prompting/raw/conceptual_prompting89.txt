@@ -1,0 +1,75 @@
+Here's a Python program to implement the traveling salesman problem using a dynamic programming approach:
+
+```python
+import numpy as np
+
+def tsp_dp(cities, distance_matrix):
+    n = len(cities)
+    all_visited = (1 << n) - 1 
+
+    memo = np.full((1 << n, n), -1, dtype=int)
+
+    def tsp_dp_helper(visited, current_city):
+        if visited == all_visited:  
+            return distance_matrix[current_city][0]
+
+        if memo[visited][current_city] != -1:
+            return memo[visited][current_city]
+
+        min_distance = float('inf')
+        for next_city in range(n):
+            mask = 1 << next_city
+            if (visited & mask) == 0:
+                next_distance = distance_matrix[current_city][next_city] + tsp_dp_helper(visited | mask, next_city)
+                min_distance = min(min_distance, next_distance)
+
+        memo[visited][current_city] = min_distance
+        return min_distance
+
+    return tsp_dp_helper(1, 0)
+
+def generate_distance_matrix(cities):
+    n = len(cities)
+    distance_matrix = np.zeros((n, n), dtype=int)
+    for i in range(n):
+        for j in range(i + 1, n):
+            distance = int(np.sqrt((cities[i][0] - cities[j][0]) ** 2 + (cities[i][1] - cities[j][1]) ** 2))
+            distance_matrix[i][j] = distance
+            distance_matrix[j][i] = distance
+            
+    return distance_matrix
+
+if __name__ == "__main__":
+    cities = [(0, 0), (1, 5), (6, 7), (4, 20), (12, 6)]
+    distance_matrix = generate_distance_matrix(cities)
+    shortest_path_length = tsp_dp(cities, distance_matrix)
+    print("Shortest path length:", shortest_path_length)
+```
+
+And here's a set of pytest tests to exercise each of the functions:
+
+```python
+import pytest
+import numpy as np
+from tsp_dp import tsp_dp, generate_distance_matrix
+
+def test_generate_distance_matrix():
+    cities = [(0, 0), (3, 4)]
+    expected_distance_matrix = np.array([[0, 5],[5, 0]], dtype=int)
+    computed_distance_matrix = generate_distance_matrix(cities)
+    assert np.array_equal(computed_distance_matrix, expected_distance_matrix)
+    
+    cities = [(0, 0), (3, 4), (18, 10)]
+    expected_distance_matrix = np.array([[0, 5, 20], [5, 0, 15], [20, 15, 0]], dtype=int)
+    computed_distance_matrix = generate_distance_matrix(cities)
+    assert np.array_equal(computed_distance_matrix, expected_distance_matrix)
+
+def test_tsp_dp():
+    cities = [(0, 0), (1, 5), (6, 7), (4, 20), (12, 6)]
+    distance_matrix = generate_distance_matrix(cities)
+    assert tsp_dp(cities, distance_matrix) == 40
+    
+    cities = [(0, 0), (3, 4), (18, 10)]
+    distance_matrix = generate_distance_matrix(cities)
+    assert tsp_dp(cities, distance_matrix) == 30
+```

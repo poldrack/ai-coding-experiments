@@ -1,0 +1,93 @@
+Here's a Python program to analyze the impact of habitat connectivity on species dispersal. I've provided sample data for distances between habitats and species' dispersal abilities, but you can change them as needed.
+
+```python
+import numpy as np
+
+# Distances between habitat patches (in meters)
+distances = np.array([[0, 1000, 5000],
+                      [1000, 0, 3000],
+                      [5000, 3000, 0]])
+
+# Species' dispersal abilities (in meters)
+species_dispersal_abilities = np.array([800, 2000, 4000])
+
+def calculate_connectivity_matrix(distances, dispersal_abilities):
+    """
+    Calculate the connectivity matrix between habitat patches.
+    """
+    connectivity_matrix = np.zeros_like(distances)
+
+    for i in range(len(distances)):
+        for j in range(len(distances)):
+            if distances[i, j] <= dispersal_abilities[min(i, j)]:
+                connectivity_matrix[i, j] = 1
+
+    return connectivity_matrix
+
+def get_connected_habitat_pairs(connectivity_matrix):
+    """
+    Get a list of connected habitat pairs.
+    """
+    connected_pairs = []
+
+    for i in range(len(connectivity_matrix)):
+        for j in range(i + 1, len(connectivity_matrix)):
+            if connectivity_matrix[i, j] == 1:
+                connected_pairs.append((i, j))
+
+    return connected_pairs
+
+def analyze_species_dispersal(distances, dispersal_abilities):
+    """
+    Analyze the impact of habitat connectivity on species dispersal.
+    """
+    connectivity_matrix = calculate_connectivity_matrix(distances, dispersal_abilities)
+    connected_pairs = get_connected_habitat_pairs(connectivity_matrix)
+
+    return connected_pairs
+
+# Analyze the species dispersal in the given habitats and dispersal abilities
+connected_pairs = analyze_species_dispersal(distances, species_dispersal_abilities)
+print("Connected habitat pairs:", connected_pairs)
+```
+
+And here is a set of pytest tests for each of the functions:
+
+```python
+import pytest
+
+def test_calculate_connectivity_matrix():
+    distances = np.array([[0, 1000, 5000],
+                          [1000, 0, 3000],
+                          [5000, 3000, 0]])
+    dispersal_abilities = np.array([800, 2000, 4000])
+
+    expected_connectivity_matrix = np.array([[0, 1, 0],
+                                             [1, 0, 1],
+                                             [0, 1, 0]])
+
+    result = calculate_connectivity_matrix(distances, dispersal_abilities)
+    assert np.array_equal(result, expected_connectivity_matrix)
+
+def test_get_connected_habitat_pairs():
+    connectivity_matrix = np.array([[0, 1, 0],
+                                     [1, 0, 1],
+                                     [0, 1, 0]])
+
+    expected_connected_pairs = [(0, 1), (1, 2)]
+
+    result = get_connected_habitat_pairs(connectivity_matrix)
+    assert result == expected_connected_pairs
+
+def test_analyze_species_dispersal():
+    distances = np.array([[0, 1000, 5000],
+                          [1000, 0, 3000],
+                          [5000, 3000, 0]])
+    dispersal_abilities = np.array([800, 2000, 4000])
+
+    expected_connected_pairs = [(0, 1), (1, 2)]
+
+    result = analyze_species_dispersal(distances, dispersal_abilities)
+    assert result == expected_connected_pairs
+
+```

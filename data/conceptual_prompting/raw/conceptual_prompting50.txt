@@ -1,0 +1,48 @@
+Here's a Python function to generate a Fibonacci sequence using a recursive approach:
+
+```python
+def fibonacci_recursive(n):
+    """
+    Generate the nth value in the Fibonacci sequence using a recursive approach.
+    
+    Args:
+    n (int): The position of the desired value in the Fibonacci sequence.
+
+    Returns:
+    int: The nth value in the Fibonacci sequence.
+    """
+    if n <= 0:
+        raise ValueError("Fibonacci sequence is defined for positive integers")
+    
+    if n == 1 or n == 2:
+        return 1
+
+    return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2)
+```
+
+Here is a set of pytest tests that exercise the `fibonacci_recursive` function:
+
+```python
+import pytest
+from fibonacci import fibonacci_recursive
+
+def test_fibonacci_recursive_base_cases():
+    assert fibonacci_recursive(1) == 1
+    assert fibonacci_recursive(2) == 1
+
+def test_fibonacci_recursive_positive_cases():
+    assert fibonacci_recursive(3) == 2
+    assert fibonacci_recursive(4) == 3
+    assert fibonacci_recursive(5) == 5
+    assert fibonacci_recursive(6) == 8
+
+def test_fibonacci_recursive_negative_case():
+    with pytest.raises(ValueError):
+        fibonacci_recursive(-1)
+
+def test_fibonacci_recursive_zero_case():
+    with pytest.raises(ValueError):
+        fibonacci_recursive(0)
+```
+
+Save the first code block content in a file named `fibonacci.py` and the tests into a file named `test_fibonacci.py`. Run pytest with the command `pytest test_fibonacci.py`.

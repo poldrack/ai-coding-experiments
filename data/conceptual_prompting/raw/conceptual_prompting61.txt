@@ -1,0 +1,51 @@
+Here is the Python code for modeling the Cobb-Douglas production function:
+
+```python
+import math
+
+def cobb_douglas(K, L, alpha, beta):
+    """
+    Calculates the Cobb-Douglas production value given the input quantities and their respective production elasticities.
+    
+    Arguments:
+    K (float): quantity of capital input
+    L (float): quantity of labor input
+    alpha (float): capital's share of output (production elasticity)
+    beta (float): labor's share of output (production elasticity)
+
+    Returns:
+    (float): the calculated Cobb-Douglas production value
+    """
+    return math.pow(K, alpha) * math.pow(L, beta)
+
+if __name__ == "__main__":
+    # Example values
+    K = 10
+    L = 20
+    alpha = 0.3
+    beta = 0.7
+
+    # Calculate the Cobb-Douglas production value with the given example values
+    result = cobb_douglas(K, L, alpha, beta)
+    print("Cobb-Douglas production value:", result)
+```
+
+And, here are the pytest tests for the code:
+
+```python
+import pytest
+from cobb_douglas import cobb_douglas
+
+def test_cobb_douglas():
+    # Test case 1
+    assert round(cobb_douglas(10, 20, 0.3, 0.7), 6) == 14.142136
+
+    # Test case 2
+    assert round(cobb_douglas(30, 15, 0.4, 0.6), 6) == 376.274556
+
+    # Test case 3
+    assert round(cobb_douglas(5, 10, 0.5, 0.5), 6) == 22.627417
+
+    # Test case 4
+    assert round(cobb_douglas(40, 20, 0.8, 0.2), 6) == 1625.721724
+```

@@ -1,0 +1,99 @@
+Here's a Python code implementing the ARIMA model for time series forecasting:
+
+```python
+import numpy as np
+import pandas as pd
+from statsmodels.tsa.arima.model import ARIMA
+import matplotlib.pyplot as plt
+
+def generate_data():
+    # Generating a random time series data as an example
+    np.random.seed(42)
+    n = 100
+    data = np.random.normal(size=n)
+    data = np.cumsum(data)
+    return pd.Series(data)
+
+def create_arima_model(data, order=(1, 1, 1)):
+    """
+    This function creates the ARIMA model given the input data and order.
+    
+    :param data: Time series data as a pandas Series
+    :param order: A tuple of p, d, and q for the ARIMA model (default: (1, 1, 1))
+    :return: An instance of the ARIMA model
+    """
+    model = ARIMA(data, order=order)
+    return model
+
+def fit_arima_model(model):
+    """
+    This function fits the given ARIMA model.
+    
+    :param model: Instance of the ARIMA model
+    :return: A fitted ARIMA model
+    """
+    fitted_model = model.fit()
+    return fitted_model
+
+def forecast_arima_model(fitted_model, steps=5):
+    """
+    This function generates predictions for the given number of steps using the fitted ARIMA model.
+    
+    :param fitted_model: A fitted ARIMA model
+    :param steps: The number of steps to forecast (default: 5)
+    :return: Forecasted values as a pandas Series
+    """
+    forecast = fitted_model.forecast(steps=steps)
+    return forecast
+
+def plot_forecast(data, forecast):
+    """
+    This function plots the actual data and the forecasted data.
+    
+    :param data: Time series data as a pandas Series
+    :param forecast: Forecasted values as a pandas Series
+    """
+    plt.figure(figsize=(12, 6))
+    plt.plot(data, label='Actual Data')
+    plt.plot(np.arange(len(data), len(data) + len(forecast)), forecast, label='Forecast')
+    plt.legend()
+    plt.show()
+
+if __name__ == '__main__':
+    data = generate_data()
+    arima_model = create_arima_model(data)
+    fitted_model = fit_arima_model(arima_model)
+    forecast = forecast_arima_model(fitted_model)
+    plot_forecast(data, forecast)
+```
+
+Now, here's a set of pytest tests exercising each of the functions:
+
+```python
+import pytest
+from statsmodels.tsa.arima.model import ARIMA
+
+def test_generate_data():
+    data = generate_data()
+    assert isinstance(data, pd.Series)
+    assert len(data) == 100
+
+def test_create_arima_model():
+    data = generate_data()
+    arima_model = create_arima_model(data)
+    assert isinstance(arima_model, ARIMA)
+
+def test_fit_arima_model():
+    data = generate_data()
+    arima_model = create_arima_model(data)
+    fitted_model = fit_arima_model(arima_model)
+    assert fitted_model is not None
+
+def test_forecast_arima_model():
+    data = generate_data()
+    arima_model = create_arima_model(data)
+    fitted_model = fit_arima_model(arima_model)
+    forecast = forecast_arima_model(fitted_model, steps=5)
+    assert isinstance(forecast, pd.Series)
+    assert len(forecast) == 5
+```

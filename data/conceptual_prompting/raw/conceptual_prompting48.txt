@@ -1,0 +1,57 @@
+Here's the Python code for K-means clustering:
+
+```python
+import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.datasets import make_blobs
+
+# Create a sample dataset
+def create_sample_data(n_samples=300, n_features=2, centers=3, random_state=None):
+    X, y = make_blobs(n_samples=n_samples, n_features=n_features, centers=centers, random_state=random_state)
+    return X, y
+
+# Apply K-means clustering on the dataset
+def k_means_clustering(X, n_clusters=3, init='k-means++', max_iter=300, n_init=10, random_state=None):
+    kmeans = KMeans(n_clusters=n_clusters, init=init, max_iter=max_iter, n_init=n_init, random_state=random_state)
+    kmeans.fit(X)
+    return kmeans
+
+# Cluster predictions for the dataset
+def predict_clusters(kmeans, X):
+    return kmeans.predict(X)
+
+# Example usage
+if __name__ == "__main__":
+    X, y = create_sample_data(random_state=42)
+    kmeans = k_means_clustering(X, n_clusters=3, random_state=42)
+    cluster_predictions = predict_clusters(kmeans, X)
+    print("Cluster predictions:\n", cluster_predictions)
+```
+
+Now, for the pytest tests:
+
+```python
+import pytest
+from my_kmeans_module import create_sample_data, k_means_clustering, predict_clusters
+
+def test_create_sample_data():
+    X, y = create_sample_data(n_samples=10, n_features=2, centers=2, random_state=42)
+    assert X.shape == (10, 2)
+    assert y.shape == (10,)
+
+def test_k_means_clustering():
+    X, y = create_sample_data(n_samples=10, n_features=2, centers=2, random_state=42)
+    kmeans = k_means_clustering(X, n_clusters=2, random_state=42)
+    assert kmeans is not None
+
+def test_predict_clusters():
+    X, y = create_sample_data(n_samples=10, n_features=2, centers=2, random_state=42)
+    kmeans = k_means_clustering(X, n_clusters=2, random_state=42)
+    cluster_predictions = predict_clusters(kmeans, X)
+    assert cluster_predictions.shape == (10,)
+
+if __name__ == "__main__":
+    pytest.main([__file__])
+```
+
+In order to run the tests, make sure to save the first code block in a file called `my_kmeans_module.py` and the second code block in a file called `test_my_kmeans_module.py`. Then, simply execute `pytest test_my_kmeans_module.py` in your terminal to run the tests.

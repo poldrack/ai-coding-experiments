@@ -1,0 +1,39 @@
+Here's the Python code for calculating the final velocity of an object in free fall, given its initial velocity and the time elapsed:
+
+```python
+def final_velocity(initial_velocity, time_elapsed, gravity=-9.81):
+    """
+    Calculate the final velocity of an object in free fall given
+    the initial velocity, time elapsed, and acceleration due to gravity.
+    
+    Args:
+    initial_velocity (float): Initial velocity of the object (m/s)
+    time_elapsed (float): Time elapsed during free fall (s)
+    gravity (float, optional): Acceleration due to gravity (m/s^2). Default is -9.81.
+
+    Returns:
+    float: Final velocity of the object after the specified time (m/s)
+    """
+    return initial_velocity + (gravity * time_elapsed)
+
+if __name__ == "__main__":
+    iv = 0  # Initial velocity (m/s)
+    te = 3  # Time elapsed (s)
+    final_v = final_velocity(iv, te)
+    print(f"Final velocity: {final_v} m/s")
+```
+
+Now, let's create a set of pytest tests that exercise each function:
+
+```python
+import pytest
+from free_fall_calculator import final_velocity
+
+def test_final_velocity():
+    assert final_velocity(0, 3) == pytest.approx(-29.43)
+    assert final_velocity(10, 5) == pytest.approx(-39.05)
+    assert final_velocity(-5, 2) == pytest.approx(-24.62)
+    assert final_velocity(20, 0) == pytest.approx(20)
+```
+
+Note: In the second code block, it's assumed that the first code block is saved in a file named `free_fall_calculator.py`. Simply run `pytest` from the command line after saving these two files to test the function.

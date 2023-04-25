@@ -1,0 +1,72 @@
+Here's the Python code to perform a topological sort on a directed acyclic graph (DAG):
+
+```python
+from collections import defaultdict
+
+class Graph:
+    def __init__(self, vertices):
+        self.graph = defaultdict(list)
+        self.V = vertices
+
+    def add_edge(self, u, v):
+        self.graph[u].append(v)
+
+    def topological_sort_util(self, v, visited, stack):
+        visited[v] = True
+        for i in self.graph[v]:
+            if visited[i] == False:
+                self.topological_sort_util(i, visited, stack)
+        stack.insert(0, v)
+
+    def topological_sort(self):
+        visited = [False] * self.V
+        stack = []
+        for i in range(self.V):
+            if visited[i] == False:
+                self.topological_sort_util(i, visited, stack)
+        return stack
+
+if __name__ == '__main__':
+    g = Graph(6)
+    g.add_edge(5, 2)
+    g.add_edge(5, 0)
+    g.add_edge(4, 0)
+    g.add_edge(4, 1)
+    g.add_edge(2, 3)
+    g.add_edge(3, 1)
+
+    print("Topological Sort:")
+    print(g.topological_sort())
+```
+
+Here's a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from topological_sort import Graph
+
+def test_add_edge():
+    g = Graph(2)
+    g.add_edge(0, 1)
+    assert g.graph == {0: [1]}
+
+def test_topological_sort_util():
+    g = Graph(2)
+    g.add_edge(0, 1)
+    visited = [False] * 2
+    stack = []
+    g.topological_sort_util(0, visited, stack)
+    assert stack == [1, 0]
+
+def test_topological_sort():
+    g = Graph(6)
+    g.add_edge(5, 2)
+    g.add_edge(5, 0)
+    g.add_edge(4, 0)
+    g.add_edge(4, 1)
+    g.add_edge(2, 3)
+    g.add_edge(3, 1)
+    assert g.topological_sort() == [5, 4, 2, 3, 1, 0]
+```
+
+Make sure to save the first Python code block in a file named `topological_sort.py` and the second code block in a file named `test_topological_sort.py` so that you can run the pytest tests properly.

@@ -1,0 +1,85 @@
+Here's a simple Python program to simulate the carbon cycle in an ecosystem. Note that this is only a basic model and can be improved with more accurate representation of the ecosystem.
+
+```python
+import random
+
+def photosynthesis_rate():
+    return random.uniform(40, 200)
+
+def respiration_rate():
+    return random.uniform(30, 150)
+
+def decomposition_rate():
+    return random.uniform(10, 80)
+
+def carbon_sequestration_rate():
+    return random.uniform(5, 50)
+
+def carbon_cycle_simulation(steps):
+    carbon_reservoirs = {
+        'atmosphere': 1000,
+        'vegetation': 1000,
+        'soil': 1000
+    }
+
+    for _ in range(steps):
+        photosynthesis = photosynthesis_rate()
+        respiration   = respiration_rate()
+        decomposition = decomposition_rate()
+        sequestration = carbon_sequestration_rate()
+
+        carbon_reservoirs['atmosphere'] -= photosynthesis
+        carbon_reservoirs['vegetation'] += (photosynthesis - respiration)
+        carbon_reservoirs['soil'] += respiration + decomposition - sequestration
+
+        # Ensure no negative values in carbon reservoirs
+        for reservoir in carbon_reservoirs:
+            carbon_reservoirs[reservoir] = max(0, carbon_reservoirs[reservoir])
+    
+    return carbon_reservoirs
+
+if __name__ == "__main__":
+    steps = 100
+    carbon_cycle_results = carbon_cycle_simulation(steps)
+    print(carbon_cycle_results)
+```
+
+Now, let's create a set of pytest tests for each of the functions.
+
+```python
+import pytest
+from carbon_cycle_simulation import photosynthesis_rate, respiration_rate, decomposition_rate, carbon_sequestration_rate, carbon_cycle_simulation
+
+def test_photosynthesis_rate():
+    for _ in range(100):
+        rate = photosynthesis_rate()
+        assert 40 <= rate <= 200
+
+def test_respiration_rate():
+    for _ in range(100):
+        rate = respiration_rate()
+        assert 30 <= rate <= 150
+
+def test_decomposition_rate():
+    for _ in range(100):
+        rate = decomposition_rate()
+        assert 10 <= rate <= 80
+
+def test_carbon_sequestration_rate():
+    for _ in range(100):
+        rate = carbon_sequestration_rate()
+        assert 5 <= rate <= 50
+
+def test_carbon_cycle_simulation():
+    steps = 100
+    carbon_cycle_results = carbon_cycle_simulation(steps)
+    assert len(carbon_cycle_results) == 3
+    assert "atmosphere" in carbon_cycle_results
+    assert "vegetation" in carbon_cycle_results
+    assert "soil" in carbon_cycle_results
+    assert isinstance(carbon_cycle_results["atmosphere"], (int, float))
+    assert isinstance(carbon_cycle_results["vegetation"], (int, float))
+    assert isinstance(carbon_cycle_results["soil"], (int, float))
+```
+
+To run the tests, install pytest, save the simulation script as `carbon_cycle_simulation.py` and the tests as `test_carbon_cycle_simulation.py`. Then, run the command `pytest` in your terminal.

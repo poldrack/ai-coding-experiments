@@ -1,0 +1,53 @@
+Here is a Python program to estimate the interest rate parity, given the spot exchange rate, the forward exchange rate, and the interest rates of the two countries:
+
+```python
+def interest_rate_parity(spot_exchange_rate, forward_exchange_rate, interest_rate_1, interest_rate_2):
+    """
+    Calculate the interest rate parity based on spot and forward exchange rates and interest rates of two countries.
+
+    :param spot_exchange_rate: The spot exchange rate between the two countries
+    :type spot_exchange_rate: float
+    :param forward_exchange_rate: The forward exchange rate between the two countries
+    :type forward_exchange_rate: float
+    :param interest_rate_1: Interest rate of country 1
+    :type interest_rate_1: float
+    :param interest_rate_2: Interest rate of country 2
+    :type interest_rate_2: float
+    :return: A boolean, True if interest rate parity holds, False otherwise
+    :rtype: bool
+    """
+    irp_equation = (1 + interest_rate_1) / (1 + interest_rate_2)
+    exchange_rate_ratio = forward_exchange_rate / spot_exchange_rate
+
+    return round(irp_equation, 6) == round(exchange_rate_ratio, 6)
+
+
+# Example values
+spot_exchange_rate = 1.20
+forward_exchange_rate = 1.22
+interest_rate_1 = 0.05
+interest_rate_2 = 0.03
+
+# Check if interest rate parity holds
+result = interest_rate_parity(spot_exchange_rate, forward_exchange_rate, interest_rate_1, interest_rate_2)
+print(result)
+```
+
+Now, here is a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from parity import interest_rate_parity
+
+@pytest.mark.parametrize("spot_exchange_rate, forward_exchange_rate, interest_rate_1, interest_rate_2, expected", [
+    (1.20, 1.22, 0.05, 0.03, True),
+    (1.50, 1.80, 0.02, 0.01, False),
+    (2.00, 2.10, 0.03, 0.05, True),
+    (1.10, 1.20, 0.06, 0.08, False),
+])
+def test_interest_rate_parity(spot_exchange_rate, forward_exchange_rate, interest_rate_1, interest_rate_2, expected):
+    result = interest_rate_parity(spot_exchange_rate, forward_exchange_rate, interest_rate_1, interest_rate_2)
+    assert result == expected
+```
+
+You can run the tests using `pytest` in the command line within the same directory as the test file.

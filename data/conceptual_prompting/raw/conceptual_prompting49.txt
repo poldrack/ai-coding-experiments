@@ -1,0 +1,56 @@
+Here's the Python function to calculate the net primary productivity (NPP) of an ecosystem, given the rates of gross primary productivity (GPP) and respiration (R):
+
+```python
+def net_primary_productivity(gpp, respiration):
+    """
+    Calculate the net primary productivity (NPP) of an ecosystem.
+
+    Args:
+    gpp (float): The rate of gross primary productivity.
+    respiration (float): The rate of respiration.
+
+    Returns:
+    float: The net primary productivity (NPP) of the ecosystem.
+    """
+
+    npp = gpp - respiration
+    return npp
+
+# Example usage:
+gpp_example = 2500  # Example value for gross primary productivity
+respiration_example = 1500  # Example value for respiration
+
+npp_example = net_primary_productivity(gpp_example, respiration_example)
+print(npp_example)
+```
+
+Here's a set of pytest tests that exercise the `net_primary_productivity` function:
+
+```python
+import pytest
+
+from npp_calculator import net_primary_productivity  # Your .py file should be named as 'npp_calculator.py'
+
+
+def test_net_primary_productivity_positive():
+    gpp = 2500
+    respiration = 1500
+    expected_npp = 1000
+    assert net_primary_productivity(gpp, respiration) == expected_npp
+
+
+def test_net_primary_productivity_zero():
+    gpp = 1500
+    respiration = 1500
+    expected_npp = 0
+    assert net_primary_productivity(gpp, respiration) == expected_npp
+
+
+def test_net_primary_productivity_negative():
+    gpp = 1000
+    respiration = 1500
+    expected_npp = -500
+    assert net_primary_productivity(gpp, respiration) == expected_npp
+```
+
+To execute the tests, make sure you have pytest installed (`pip install pytest`), then run `pytest` in your terminal, followed by the name of the .py file containing the tests.

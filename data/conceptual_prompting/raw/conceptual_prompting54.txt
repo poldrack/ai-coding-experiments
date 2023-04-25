@@ -1,0 +1,114 @@
+Here's a Python implementation of the Ford-Fulkerson algorithm for solving the maximum flow problem in a network:
+
+```python
+from collections import defaultdict
+
+class Graph:
+    def __init__(self, vertices):
+        self.V = vertices
+        self.graph = defaultdict(lambda: defaultdict(int))
+
+    def add_edge(self, u, v, w):
+        self.graph[u][v] = w
+
+    def bfs(self, src, dest, parent):
+        visited = [False] * self.V
+        queue = [src]
+        visited[src] = True
+
+        while queue:
+            u = queue.pop(0)
+
+            for v, w in self.graph[u].items():
+                if not visited[v] and w > 0:
+                    queue.append(v)
+                    visited[v] = True
+                    parent[v] = u
+
+                    if v == dest:
+                        return True
+        return False
+
+    def max_flow(self, src, dest):
+        parent = [-1] * self.V
+        max_flow = 0
+
+        while self.bfs(src, dest, parent):
+            path_flow = float("Inf")
+            v = dest
+
+            while v != src:
+                u = parent[v]
+                path_flow = min(path_flow, self.graph[u][v])
+                v = u
+
+            max_flow += path_flow
+
+            v = dest
+            while v != src:
+                u = parent[v]
+                self.graph[u][v] -= path_flow
+                self.graph[v][u] += path_flow
+                v = u
+
+        return max_flow
+
+def main():
+    g = Graph(6)
+    g.add_edge(0, 1, 16)
+    g.add_edge(0, 2, 13)
+    g.add_edge(1, 3, 12)
+    g.add_edge(2, 1, 4)
+    g.add_edge(2, 4, 14)
+    g.add_edge(3, 2, 9)
+    g.add_edge(3, 5, 20)
+    g.add_edge(4, 3, 7)
+    g.add_edge(4, 5, 4)
+
+    source = 0
+    sink = 5
+
+    print(f"The maximum possible flow is {g.max_flow(source, sink)}")
+
+if __name__ == "__main__":
+    main()
+```
+
+Here's a set of `pytest` tests that exercise each of the functions:
+
+```python
+from ford_fulkerson import Graph
+import pytest
+
+def test_graph_initialization():
+    g = Graph(4)
+    assert g.V == 4
+    assert g.graph == defaultdict(lambda: defaultdict(int))
+
+def test_graph_add_edge():
+    g = Graph(4)
+    g.add_edge(0, 1, 10)
+    g.add_edge(1, 2, 5)
+    assert g.graph[0][1] == 10
+    assert g.graph[1][2] == 5
+
+def test_graph_bfs():
+    g = Graph(4)
+    g.add_edge(0, 1, 5)
+    g.add_edge(1, 3, 8)
+    g.add_edge(0, 2, 7)
+    g.add_edge(2, 3, 12)
+
+    parent = [-1] * 4
+    assert g.bfs(0, 3, parent) == True
+
+def test_max_flow():
+    g = Graph(4)
+    g.add_edge(0, 1, 5)
+    g.add_edge(1, 3, 8)
+    g.add_edge(0, 2, 7)
+    g.add_edge(2, 3, 12)
+
+    max_flow = g.max_flow(0, 3)
+    assert max_flow == 12
+```

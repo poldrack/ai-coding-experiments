@@ -1,0 +1,86 @@
+Here is a Python code that models the succession of plant communities in an ecosystem:
+
+```python
+import random
+
+class Plant:
+    def __init__(self, growth_rate, competitive_ability, disturbance_rate):
+        self.growth_rate = growth_rate
+        self.competitive_ability = competitive_ability
+        self.disturbance_rate = disturbance_rate
+
+def simulate_succession(plants, years):
+    """Simulates the succession of plant communities over a specified number of years."""
+    for year in range(years):
+        update_growth_rates(plants)
+        apply_competition(plants)
+        apply_disturbance(plants)
+    return plants
+
+def update_growth_rates(plants):
+    """Updates the growth rates of plants based on their competitive abilities."""
+    for plant in plants:
+        plant.growth_rate += plant.competitive_ability
+
+def apply_competition(plants):
+    """Simulates competition between plants by scaling their growth rates."""
+    total_growth_rate = sum([plant.growth_rate for plant in plants])
+    for plant in plants:
+        plant.growth_rate = plant.growth_rate / total_growth_rate
+        
+def apply_disturbance(plants):
+    """Apply a random disturbance to the plants and update their growth rates."""
+    for plant in plants:
+        disturbance = random.uniform(0.5, 1.5)
+        plant.growth_rate *= (1 - plant.disturbance_rate * disturbance)
+
+# Example plants
+plant_a = Plant(growth_rate=1, competitive_ability=0.3, disturbance_rate=0.2)
+plant_b = Plant(growth_rate=1.5, competitive_ability=0.5, disturbance_rate=0.3)
+plant_c = Plant(growth_rate=2, competitive_ability=0.1, disturbance_rate=0.1)
+
+plants = [plant_a, plant_b, plant_c]
+
+# Run the simulation
+result = simulate_succession(plants, 20)
+for i, plant in enumerate(result):
+    print(f"Plant {i + 1} growth rate: {plant.growth_rate}")
+```
+
+Here is a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from succession import Plant, update_growth_rates, apply_competition, apply_disturbance
+
+def test_update_growth_rates():
+    plant_a = Plant(1, 0.3, 0.2)
+    plant_b = Plant(1.5, 0.5, 0.3)
+    plants = [plant_a, plant_b]
+
+    update_growth_rates(plants)
+
+    assert plants[0].growth_rate == pytest.approx(1.3)
+    assert plants[1].growth_rate == pytest.approx(2.0)
+
+def test_apply_competition():
+    plant_a = Plant(1, 0.3, 0.2)
+    plant_b = Plant(1.5, 0.5, 0.3)
+    plants = [plant_a, plant_b]
+
+    apply_competition(plants)
+
+    assert plants[0].growth_rate == pytest.approx(0.4)
+    assert plants[1].growth_rate == pytest.approx(0.6)
+
+def test_apply_disturbance():
+    plant_a = Plant(1, 0.3, 0.2)
+    plant_b = Plant(1.5, 0.5, 0.3)
+    plants = [plant_a, plant_b]
+
+    random.seed(42)  # Setting seed for deterministic test results
+    apply_disturbance(plants)
+
+    assert plants[0].growth_rate == pytest.approx(0.78200000000)
+    assert plants[1].growth_rate == pytest.approx(1.10600000000)
+```

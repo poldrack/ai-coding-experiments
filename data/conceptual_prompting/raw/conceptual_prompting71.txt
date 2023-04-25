@@ -1,0 +1,68 @@
+Here is a Python program to simulate the dynamics of a metapopulation, given the local population sizes, colonization rates, and extinction rates:
+
+```python
+import random
+
+def update_population(local_population, colonization_rate, extinction_rate):
+    # Update the population by adding colonizers and removing extinct populations
+    for i, population in enumerate(local_population):
+        colonized = random.random() < colonization_rate
+        extinct = random.random() < extinction_rate
+
+        if colonized:
+            local_population[i] += 1
+        if extinct and local_population[i] > 0:
+            local_population[i] -= 1
+
+    return local_population
+
+def simulate_metapopulation(iterations, local_population, colonization_rate, extinction_rate):
+    # Simulate the dynamics of a metapopulation for a given number of iterations
+    for _ in range(iterations):
+        local_population = update_population(local_population, colonization_rate, extinction_rate)
+
+    return local_population
+
+# Example parameters
+iterations = 100
+local_population = [10, 5, 8, 12, 15, 20, 25, 30]
+colonization_rate = 0.1
+extinction_rate = 0.05
+
+# Perform the simulation
+final_local_population = simulate_metapopulation(iterations, local_population, colonization_rate, extinction_rate)
+print(final_local_population)
+```
+
+Here is a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from metapopulation import update_population, simulate_metapopulation
+
+def test_update_population():
+    local_population = [10, 5, 8, 12, 15, 20, 25, 30]
+    colonization_rate = 0.1
+    extinction_rate = 0.05
+
+    updated_population = update_population(local_population, colonization_rate, extinction_rate)
+
+    assert isinstance(updated_population, list)
+    assert len(updated_population) == len(local_population)
+    assert all(isinstance(pop, int) for pop in updated_population)
+
+def test_simulate_metapopulation():
+    iterations = 100
+    local_population = [10, 5, 8, 12, 15, 20, 25, 30]
+    colonization_rate = 0.1
+    extinction_rate = 0.05
+
+    final_local_population = simulate_metapopulation(iterations, local_population, colonization_rate, extinction_rate)
+
+    assert isinstance(final_local_population, list)
+    assert len(final_local_population) == len(local_population)
+    assert all(isinstance(pop, int) for pop in final_local_population)
+
+if __name__ == "__main__":
+    pytest.main()
+```

@@ -1,0 +1,50 @@
+Here's a Python function to compute the buoyant force on an object submerged in a fluid:
+
+```python
+def buoyant_force(volume, fluid_density):
+    """
+    Calculate the buoyant force on an object, given its volume and fluid density.
+    
+    Args:
+    volume (float): The volume of the object (in cubic meters, m^3)
+    fluid_density (float): The density of the fluid (in kg/m^3)
+    
+    Returns:
+    float: Buoyant force on the object (in Newtons, N)
+    """
+    gravity = 9.81  # acceleration due to gravity (in m/s^2)
+    force = volume * fluid_density * gravity
+    return force
+
+# Example usage:
+volume = 0.1  # Object volume in m^3
+fluid_density = 1000  # Fluid density in kg/m^3 (for freshwater)
+result = buoyant_force(volume, fluid_density)
+print(f"The buoyant force on the object is {result} N.")
+```
+
+Here's a set of pytest tests that exercise the `buoyant_force` function:
+
+```python
+import pytest
+from buoyancy import buoyant_force
+
+def test_buoyant_force():
+    volume = 0.1  # 0.1 m^3
+    fluid_density = 1000  # kg/m^3 for freshwater
+    expected = 981  # Newtons
+    result = buoyant_force(volume, fluid_density)
+    assert result == pytest.approx(expected)
+
+    volume = 0.5  # 0.5 m^3
+    fluid_density = 1030  # kg/m^3 for seawater
+    expected = 5091.15  # Newtons
+    result = buoyant_force(volume, fluid_density)
+    assert result == pytest.approx(expected)
+
+    volume = 0  # 0 m^3
+    fluid_density = 1000  # kg/m^3 for freshwater
+    expected = 0  # Newtons
+    result = buoyant_force(volume, fluid_density)
+    assert result == pytest.approx(expected)
+```

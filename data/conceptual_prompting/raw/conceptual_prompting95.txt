@@ -1,0 +1,68 @@
+Here's the Python code that calculates the mean, median, and mode of a list of numbers:
+
+```python
+from collections import Counter
+
+def mean(numbers_list):
+    """Calculate the mean of the list of numbers."""
+    total = sum(numbers_list)
+    count = len(numbers_list)
+    return total / count
+
+def median(numbers_list):
+    """Calculate the median of the list of numbers."""
+    sorted_list = sorted(numbers_list)
+    count = len(numbers_list)
+
+    if count % 2 == 0:
+        mid1 = sorted_list[(count // 2) - 1]
+        mid2 = sorted_list[count // 2]
+        return (mid1 + mid2) / 2
+    else:
+        return sorted_list[count // 2]
+
+def mode(numbers_list):
+    """Calculate the mode of the list of numbers."""
+    num_frequency = Counter(numbers_list)
+    max_frequency = max(num_frequency.values())
+    return [n for n, freq in num_frequency.items() if freq == max_frequency]
+
+# Example usage:
+numbers_list = [4, 2, 7, 4, 3, 8, 9, 4, 5]
+
+mean_value = mean(numbers_list)
+median_value = median(numbers_list)
+mode_values = mode(numbers_list)
+
+print("Mean:", mean_value)
+print("Median:", median_value)
+print("Mode:", mode_values)
+```
+
+And here's a set of pytest tests that exercise each of the functions:
+
+```python
+import pytest
+from mean_median_mode import mean, median, mode
+
+def test_mean():
+    assert mean([10, 20, 30, 40, 50]) == 30
+    assert mean([1, 2, 3, 4, 5, 6, 7]) == 4
+    assert mean([5, 6, 7, 8, 5, 6, 5]) == 6
+
+def test_median():
+    assert median([10, 20, 30, 40, 50]) == 30
+    assert median([1, 2, 3, 4, 5, 6, 7]) == 4
+    assert median([5, 6, 7, 8, 5, 6, 5]) == 6
+    assert median([1, 2, 3, 4, 5, 6]) == 3.5
+
+def test_mode():
+    assert mode([10, 20, 30, 40, 50]) == [10, 20, 30, 40, 50]
+    assert mode([1, 2, 3, 4, 5, 6, 7]) == [1, 2, 3, 4, 5, 6, 7]
+    assert mode([10, 20, 30, 40, 50, 30]) == [30]
+    assert mode([5, 6, 7, 8, 5, 6, 5]) == [5]
+
+if __name__ == "__main__":
+    pytest.main()
+```
+Please note that for the pytest tests, you will need to save the mean, median, and mode functions in a separate file named `mean_median_mode.py`.

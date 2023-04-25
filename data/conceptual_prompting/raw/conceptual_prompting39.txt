@@ -1,0 +1,65 @@
+Here's a Python function that models the production function of a firm, given the input quantities and their respective production elasticities:
+
+```python
+def production_function(input_quantities, elasticities):
+    """
+    Calculate the production output of a firm, given the input quantities and their respective production elasticities.
+
+    :param input_quantities: list of input quantities
+    :param elasticities: list of production elasticities for each input
+    :return: total production output
+    """
+    if len(input_quantities) != len(elasticities):
+        raise ValueError("Input quantities and elasticities must have the same length.")
+
+    output = 1
+    for q, e in zip(input_quantities, elasticities):
+        output *= q ** e
+    return output
+
+
+# Example usage:
+input_quantities = [100, 200, 300]
+elasticities = [0.3, 0.4, 0.3]
+
+production_output = production_function(input_quantities, elasticities)
+print(f"Production output: {production_output}")
+```
+
+For testing the function using `pytest`, you can write the following test cases:
+
+```python
+import pytest
+from production_function import production_function
+
+
+def test_production_function_valid():
+    input_quantities = [100, 200, 300]
+    elasticities = [0.3, 0.4, 0.3]
+    assert production_function(input_quantities, elasticities) == 100 ** 0.3 * 200 ** 0.4 * 300 ** 0.3
+
+
+def test_production_function_zero_inputs():
+    input_quantities = [0, 0, 0]
+    elasticities = [0.3, 0.4, 0.3]
+    assert production_function(input_quantities, elasticities) == 0
+
+
+def test_production_function_zero_elasticities():
+    input_quantities = [100, 200, 300]
+    elasticities = [0, 0, 0]
+    assert production_function(input_quantities, elasticities) == 1
+
+
+def test_production_function_mismatched_lengths():
+    input_quantities = [100, 200, 300]
+    elasticities = [0.3, 0.4]
+    with pytest.raises(ValueError):
+        production_function(input_quantities, elasticities)
+```
+
+Note that to run the tests, you will need to have `pytest` installed. You can install it using `pip`:
+
+```
+pip install pytest
+```

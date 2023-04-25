@@ -1,0 +1,51 @@
+Here is a Python program that implements the quicksort algorithm for sorting a list of numbers:
+
+```python
+def quicksort(arr):
+    # base case
+    if len(arr) <= 1:
+        return arr
+
+    # choose pivot
+    pivot = arr[len(arr) // 2]
+
+    # partition array into 3 parts: elements <= pivot, pivot itself, elements >= pivot
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+
+    # recursively sort left and right parts and combine them together with the middle part
+    return quicksort(left) + middle + quicksort(right)
+
+# Example usage:
+example_arr = [3, 6, 8, 10, 1, 2, 1]
+print("Original Array:", example_arr)
+print("Sorted Array:", quicksort(example_arr))
+```
+
+Here is a simple pytest test suite that exercises the `quicksort` function:
+
+```python
+import pytest
+from quicksort import quicksort
+
+def test_quicksort_empty():
+    assert quicksort([]) == []
+
+def test_quicksort_single_element():
+    assert quicksort([8]) == [8]
+
+def test_quicksort_sorted_array():
+    assert quicksort([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]
+
+def test_quicksort_reverse_sorted_array():
+    assert quicksort([5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5]
+
+def test_quicksort_negative_numbers():
+    assert quicksort([3, -1, 5, 0, -5, -2]) == [-5, -2, -1, 0, 3, 5]
+
+def test_quicksort_duplicates():
+    assert quicksort([4, 5, 2, 2, 4, 1, 5]) == [1, 2, 2, 4, 4, 5, 5]
+ ```
+ 
+For running the tests, save the quicksort implementation in a file called `quicksort.py`, and the tests in a file called `test_quicksort.py`. After that, execute the command `pytest` in your terminal.

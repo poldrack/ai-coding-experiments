@@ -1,0 +1,46 @@
+Here's the Python code to calculate the economic profit of a firm:
+
+```python
+def calculate_economic_profit(total_revenue, total_cost, opportunity_cost):
+    """
+    Calculate the economic profit of a firm.
+
+    Args:
+    total_revenue (float): The firm's total revenue.
+    total_cost (float): The firm's total cost.
+    opportunity_cost (float): The opportunity cost for the firm's investment.
+
+    Returns:
+    float: Economic profit calculated as total_revenue - total_cost - opportunity_cost.
+    """
+    economic_profit = total_revenue - total_cost - opportunity_cost
+    return economic_profit
+
+# Example usage:
+total_revenue = 100000
+total_cost = 80000
+opportunity_cost = 5000
+
+economic_profit = calculate_economic_profit(total_revenue, total_cost, opportunity_cost)
+print("Economic Profit:", economic_profit)
+```
+
+Here's a set of pytest tests for the `calculate_economic_profit` function:
+
+```python
+import pytest
+from economic_profit import calculate_economic_profit
+
+def test_calculate_economic_profit_positive():
+    assert calculate_economic_profit(100000, 80000, 5000) == 15000
+
+def test_calculate_economic_profit_zero():
+    assert calculate_economic_profit(100000, 95000, 5000) == 0
+
+def test_calculate_economic_profit_negative():
+    assert calculate_economic_profit(100000, 105000, 5000) == -10000
+
+def test_calculate_economic_profit_invalid_arguments():
+    with pytest.raises(TypeError):
+        calculate_economic_profit("100000", "80000", "5000")
+```

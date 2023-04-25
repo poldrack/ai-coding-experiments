@@ -1,0 +1,75 @@
+Here's a Python function implementing the merge-sort algorithm for sorting a list of numbers:
+
+```python
+def merge_sort(lst):
+    if len(lst) <= 1:      # Base case: a single or empty list is considered sorted
+        return lst
+
+    mid = len(lst) // 2    # Calculate the middle index for splitting the list
+    left = lst[:mid]       # Split the list into two halves
+    right = lst[mid:]
+
+    left = merge_sort(left)     # Recursively sort the left half
+    right = merge_sort(right)   # Recursively sort the right half
+
+    return merge(left, right)   # Merge the two sorted halves
+
+
+def merge(left, right):
+    merged = []
+    left_index = 0
+    right_index = 0
+
+    # Continue merging until either one of the halves is exhausted
+    while left_index < len(left) and right_index < len(right):
+        if left[left_index] < right[right_index]:
+            merged.append(left[left_index])
+            left_index += 1
+        else:
+            merged.append(right[right_index])
+            right_index += 1
+
+    # Add the remaining elements from the left half
+    while left_index < len(left):
+        merged.append(left[left_index])
+        left_index += 1
+
+    # Add the remaining elements from the right half
+    while right_index < len(right):
+        merged.append(right[right_index])
+        right_index += 1
+
+    return merged
+```
+
+And here's a set of pytest tests to exercise the merge_sort function:
+
+```python
+import pytest
+
+from merge_sort import merge_sort
+
+
+def test_merge_sort_empty_list():
+    assert merge_sort([]) == []
+
+
+def test_merge_sort_single_element():
+    assert merge_sort([5]) == [5]
+
+
+def test_merge_sort_sorted_list():
+    assert merge_sort([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]
+
+
+def test_merge_sort_unsorted_list():
+    assert merge_sort([4, 2, 1, 5, 3]) == [1, 2, 3, 4, 5]
+
+
+def test_merge_sort_with_duplicates():
+    assert merge_sort([1, 4, 1, 4, 2]) == [1, 1, 2, 4, 4]
+
+
+def test_merge_sort_descending_order():
+    assert merge_sort([5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5]
+```

@@ -1,0 +1,67 @@
+Here's a Python implementation of the Knapsack problem using dynamic programming:
+
+```python
+def knap_sack(max_weight, weights, values, item_count):
+    """
+    A function to solve the Knapsack problem using dynamic programming.
+
+    Args:
+    max_weight (int): The maximum weight the knapsack can hold.
+    weights (list): A list of weights for each item.
+    values (list): A list of values for each item.
+    item_count (int): The number of items.
+
+    Returns:
+    int: The maximum value that can be obtained by selecting a subset of items.
+    """
+
+    # Create a table to store the solution for subproblems
+    table = [[0 for _ in range(max_weight + 1)] for _ in range(item_count + 1)]
+
+    for i in range(item_count + 1):
+        for w in range(max_weight + 1):
+            if i == 0 or w == 0:
+                table[i][w] = 0
+            elif weights[i - 1] <= w:
+                table[i][w] = max(values[i - 1] + table[i - 1][w - weights[i - 1]], table[i - 1][w])
+            else:
+                table[i][w] = table[i - 1][w]
+
+    return table[item_count][max_weight]
+
+# Example usage:
+weights = [10, 20, 30]
+values = [60, 100, 120]
+max_weight = 50
+item_count = len(weights)
+
+print(knap_sack(max_weight, weights, values, item_count))  # Output: 220
+```
+
+Now, let's create pytest tests that exercise the functions:
+
+```python
+import pytest
+from knapsack import knap_sack
+
+def test_knap_sack():
+    weights = [10, 20, 30]
+    values = [60, 100, 120]
+    max_weight = 50
+    item_count = len(weights)
+    assert knap_sack(max_weight, weights, values, item_count) == 220
+
+    weights = [5, 10, 15]
+    values = [20, 40, 60]
+    max_weight = 30
+    item_count = len(weights)
+    assert knap_sack(max_weight, weights, values, item_count) == 80
+
+    weights = [2, 2, 4, 5]
+    values = [3, 7, 2, 9]
+    max_weight = 10
+    item_count = len(weights)
+    assert knap_sack(max_weight, weights, values, item_count) == 19
+```
+
+Here, the first block of code is the implementation of the Knapsack problem using dynamic programming, while the second block of code consists of the pytest tests. Save the implementation in a file named `knapsack.py` and the tests in a file named `test_knapsack.py`, then run the tests using the command `pytest test_knapsack.py`.

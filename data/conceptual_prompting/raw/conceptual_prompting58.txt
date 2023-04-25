@@ -1,0 +1,41 @@
+Here's a Python function to compute the work done by a force on an object:
+
+```python
+import math
+
+def work_done(force, distance, angle):
+    """
+    Calculate work done based on the given force, distance, and angle.
+    
+    Args:
+    force (float): The force applied on the object (in Newtons).
+    distance (float): The distance the object is displaced (in meters).
+    angle (float): The angle between the force and displacement (in degrees).
+
+    Returns:
+    float: work done in Joules.
+    """
+    # Convert angle from degrees to radians
+    angle_rad = math.radians(angle)
+
+    # Calculate work done
+    work = force * distance * math.cos(angle_rad)
+
+    return work
+```
+
+Now, here is a set of pytest tests to exercise the function:
+
+```python
+import pytest
+from work_done_module import work_done
+
+def test_work_done():
+    assert work_done(50, 10, 0) == 500
+    assert work_done(0, 10, 45) == 0
+    assert work_done(50, 0, 45) == 0
+    assert work_done(50, 10, 45) == pytest.approx(353.55, 0.01)
+    assert work_done(50, 10, 90) == 0
+```
+
+Save the function in a module named `work_done_module.py` and the tests in a file named `test_work_done.py`. To run the tests, install pytest (`pip install pytest`) and run `pytest test_work_done.py` in your terminal.

@@ -1,0 +1,50 @@
+Here's a Python function that models the Phillips curve:
+
+```python
+def phillips_curve(inflation_rate, natural_rate_of_unemployment, output_gap, alpha=0.5, beta=0.5):
+    """
+    Model the Phillips curve.
+    
+    Args:
+    inflation_rate (float): The current inflation rate.
+    natural_rate_of_unemployment (float): The natural rate of unemployment.
+    output_gap (float): The output gap.
+    alpha (float, optional): The parameter representing the sensitivity of inflation to changes in output gap. Default to 0.5.
+    beta (float, optional): The parameter representing the persistence of inflation. Default to 0.5.
+
+    Returns:
+    float: The predicted unemployment rate.
+    """
+    expected_inflation = beta * inflation_rate
+    unemployment_rate = natural_rate_of_unemployment - alpha * output_gap
+    return unemployment_rate, expected_inflation
+```
+
+And here are the pytest tests to exercise the `phillips_curve` function:
+
+```python
+import pytest
+from phillips_curve import phillips_curve
+
+def test_phillips_curve_positive_output_gap():
+    unemployment_rate, expected_inflation = phillips_curve(0.03, 0.05, 0.02)
+    assert unemployment_rate < 0.05
+    assert expected_inflation == 0.03 * 0.5
+
+def test_phillips_curve_negative_output_gap():
+    unemployment_rate, expected_inflation = phillips_curve(0.03, 0.05, -0.02)
+    assert unemployment_rate > 0.05
+    assert expected_inflation == 0.03 * 0.5
+
+def test_phillips_curve_zero_output_gap():
+    unemployment_rate, expected_inflation = phillips_curve(0.03, 0.05, 0)
+    assert unemployment_rate == 0.05
+    assert expected_inflation == 0.03 * 0.5
+
+def test_phillips_curve_custom_alpha_beta():
+    alpha = 0.4
+    beta = 0.8
+    unemployment_rate, expected_inflation = phillips_curve(0.03, 0.05, 0.02, alpha=alpha, beta=beta)
+    assert unemployment_rate == 0.05 - alpha * 0.02
+    assert expected_inflation == 0.03 * beta
+```

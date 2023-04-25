@@ -1,0 +1,52 @@
+Here is the Python code to calculate the carrying capacity of an ecosystem:
+
+```python
+def carrying_capacity(rate, initial_population, max_population):
+    """
+    Calculate the carrying capacity of an ecosystem.
+
+    Parameters:
+    rate (float): Population growth rate.
+    initial_population (int): Initial population size.
+    max_population (int): Maximum sustainable population.
+
+    Returns:
+    float: Carrying capacity of the ecosystem.
+    """
+
+    return (rate * initial_population * (max_population - initial_population)) / max_population
+
+# Example values
+growth_rate = 0.1
+initial_pop = 100
+max_sustainable_population = 1000
+
+# Calculate the carrying capacity
+capacity = carrying_capacity(growth_rate, initial_pop, max_sustainable_population)
+print("Carrying capacity:", capacity)
+```
+
+Here are some pytest tests for the `carrying_capacity` function:
+
+```python
+import pytest
+from ecosystem import carrying_capacity
+
+def test_carrying_capacity():
+    # Test with sample values
+    assert carrying_capacity(0.1, 100, 1000) == 90.0
+
+    # Test with zero rate
+    assert carrying_capacity(0, 100, 1000) == 0
+
+    # Test with zero initial population
+    assert carrying_capacity(0.1, 0, 1000) == 0
+
+    # Test with equal initial and maximum population
+    assert carrying_capacity(0.1, 1000, 1000) == 0
+
+    # Test with irrational numbers
+    assert carrying_capacity(0.333, 500, 1234) == pytest.approx(138.327, rel=1e-3)
+```
+
+Make sure to save the first code snippet in a file named `ecosystem.py` and the second code snippet in a separate file named `test_ecosystem.py`. Then, run `pytest test_ecosystem.py` to test the function.
