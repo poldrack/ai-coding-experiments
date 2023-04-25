@@ -33,6 +33,8 @@ def extract_coverage(coverage):
 if __name__ == "__main__":
     dirs = sorted(Path('data/conceptual_prompting/testdirs').glob('concep*'))
     coverage_file = Path('results/conceptual_prompting/code_coverage.json')
+    if not os.path.exists(os.path.dirname(coverage_file)):
+        os.makedirs(os.path.dirname(coverage_file))
 
     if not coverage_file.exists():
         coverage = {}
