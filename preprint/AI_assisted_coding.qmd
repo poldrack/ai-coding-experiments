@@ -185,7 +185,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-coverage_df = pd.read_csv("https://raw.githubusercontent.com/poldrack/ai-coding-experiments/main/results/conceptual_prompting/code_coverage.csv")
+coverage_df = pd.read_csv("../results/conceptual_prompting/code_coverage.csv")
 
 def jitter(values,width):
     return values + np.random.uniform(-(width/2), width/2, values.shape)
