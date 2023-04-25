@@ -5,7 +5,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from pathlib import Path
-
+import os
 
 # %%
 flake8_error_messages = {
@@ -226,8 +226,10 @@ def plot_errors(error_df, figsize=None,
 
 if __name__ == "__main__":
 
-    basedir = Path('/home/poldrack/Dropbox/code/talks-AIAssistedCoding')
+    basedir = Path('./')
     error_df = get_error_df(basedir)
     fig = plot_errors(error_df)
-    fig.savefig('/home/poldrack/Dropbox/Documents/Presentations/talks-AIAssistedCoding/talk/images/flake8_errors.png', dpi=300, bbox_inches='tight')
+    if not os.path.exists('./images'):
+        os.makedirs('./images')
+    fig.savefig('./images/flake8_errors.png', dpi=300, bbox_inches='tight')
 
