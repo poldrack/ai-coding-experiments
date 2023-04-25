@@ -52,30 +52,39 @@ def extract_test_results(line):
 def get_errors(test_output):
     npassed, nfailed, nerrors = extract_test_results(test_output[-1])
 
-    errors = []
-    for line in test_output:
-        if len(line) == 0:
-            continue
-        if line[0] == '>' and ('assert' in line or 'raise' in line):
-            errors.append(line)
-        elif line[0] == 'E' and 'TypeError' in line:
-            errors.append(line)
-#        if 'DID NOT RAISE' in line:
-#            errors.append(line)
+    messages = []
+    if nfailed > 0:
+        for i, line in enumerate(test_output):
+            if len(line) == 0:
+                continue
+            if line[0] == '>' and len(test_output[i + 1]) > 0 and test_output[i+1][0] == 'E':
+                messages.append(line + test_output[i+1])
+    if nerrors > 0:
+        for i, line in enumerate(test_output):
+            if len(line) == 0:
+                continue
+            if line[0] == 'E' and 'Error' in line:
+                messages.append(line)
     try:
-        assert len(errors) == (nerrors + nfailed)
+        assert len(messages) == (nerrors + nfailed)
     except AssertionError:
         print('AssertionError')
         print(test_output)
-        print(f'len(errors) = {len(errors)}')
+        print(f'len(errors) = {len(messages)}')
         print(f'n_errors + n_failed = {nerrors + nfailed}')
         raise AssertionError
-    return errors
+    return messages
 
 if __name__ == "__main__":
     coverage_df = pd.read_csv('results/conceptual_prompting/code_coverage.csv')
     coverage_df['test_success'] = False
     coverage_df['ntests'] = None
+    error_types = ['assert_errors', 'raise_errors',
+                    'other_errors', 'type_errors',
+                    'value_errors', 'index_errors',
+                    'zerodiv_errors']
+    for e in error_types:
+        coverage_df[e] = 0
     success = {}
     failure = {}
     for idx in coverage_df.index:
@@ -84,8 +93,11 @@ if __name__ == "__main__":
         test_output = run_test(f'MPLBACKEND=Agg python -m pytest {d}')
         coverage_df.loc[idx, 'ntests'] = int(test_output[4].split(' ')[1])
         npassed, nfailed, nerrors = extract_test_results(test_output[-1])
+
         print(coverage_df.loc[idx, 'ntests'], npassed, nfailed, nerrors)
-        
+
+        coverage_df.loc[idx, ['npassed', 'nfailed', 'nerrors']] = [
+            npassed, nfailed, nerrors]
         if nfailed == 0 and nerrors == 0:
             success[d] = test_output[-1]
             coverage_df.loc[idx, 'test_success'] = True
@@ -95,6 +107,27 @@ if __name__ == "__main__":
             errors = get_errors(test_output)
             print(get_errors(test_output))
             print('')
-
+            coverage_df.loc[idx, 'messages'] = ';'.join(errors)
+            for e in errors:
+                print(e)
+                if 'ZeroDivisionError' in e:
+                    coverage_df.loc[idx,'zerodiv_errors'] += 1
+                elif re.search(r'>\s*assert', e):
+                    coverage_df.loc[idx, 'assert_errors'] += 1
+                elif re.search(r'>\s*np.testing.assert', e):
+                    coverage_df.loc[idx, 'assert_errors'] += 1
+                elif re.search(r'>\s*with pytest.raises', e):
+                    coverage_df.loc[idx,'raise_errors'] += 1
+                elif re.search(r'E\s*TypeError', e):
+                    coverage_df.loc[idx,'type_errors'] += 1
+                elif re.search(r'E\s*IndexError', e):
+                    coverage_df.loc[idx,'index_errors'] += 1
+                elif re.search(r'E\s*ValueError', e):
+                    coverage_df.loc[idx,'value_errors'] += 1
+                else:
+                    coverage_df.loc[idx,'other_errors'] += 1
 
     coverage_df.to_csv('results/conceptual_prompting/code_coverage.csv', index=False)
+
+    for et in error_types:
+        print(f'n {et}:', coverage_df.query(f'{et} > 0').shape[0])
