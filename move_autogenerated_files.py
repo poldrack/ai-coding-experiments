@@ -101,6 +101,7 @@ if __name__ == '__main__':
         try:
             with open(f) as fh:
                 code = fh.readlines()
+            assert len(code) > 0
         except Exception:
             print(f'error reading {f}')
             shutil.move(f, os.path.join(outdir, f.as_posix().split('/')[-1]))
