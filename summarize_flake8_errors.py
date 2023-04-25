@@ -1,10 +1,13 @@
+# %%
 import json
 import collections
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 
+# %%
 flake8_error_messages = {
     "E101": "Indentation contains mixed spaces and tabs",
     "E111": "Indentation is not a multiple of four",
@@ -121,6 +124,7 @@ flake8_error_messages = {
 }
 
 
+# %%
 def process_flake8_errors(flake8_errors):
     """
     Process flake8 errors to remove the line number and the error code
@@ -134,11 +138,15 @@ def process_flake8_errors(flake8_errors):
     return processed_errors
 
 
-if __name__ == "__main__":
-    with open('results/github/code_analytics.json', 'r') as f:
+def get_error_df(basedir):
+    if isinstance(basedir, str):
+        basedir = Path(basedir)
+    
+
+    with open(basedir / 'results/github/code_analytics.json', 'r') as f:
         github_data = json.load(f)
 
-    with open('results/gpt4/code_analytics.json', 'r') as f:
+    with open(basedir / 'results/gpt4/code_analytics.json', 'r') as f:
         gpt4_data = json.load(f)
 
     shared_keys = set(github_data.keys()).intersection(
@@ -165,20 +173,61 @@ if __name__ == "__main__":
             errorcounts[dataset].items(), 
             columns=['errorcode', 'count'])
         error_df[dataset]['dataset'] = dataset
+    return error_df
 
-all_errors = pd.concat([error_df['github'], error_df['gpt4']])
+def get_joined_errors(error_df):
 
-errors_joined = error_df['github'].merge(
-    error_df['gpt4'], on='errorcode', how='outer')
+    all_errors = pd.concat([error_df['github'], error_df['gpt4']])
 
-errors_joined['sum_errors'] = errors_joined['count_x'] + errors_joined['count_y']
-sum_threshold = 20
-errors_joined = errors_joined[errors_joined['sum_errors'] > sum_threshold]
+    # %%
+    errors_joined = error_df['github'].merge(
+        error_df['gpt4'], on='errorcode', how='outer')
 
-all_errors = all_errors[all_errors['errorcode'].isin(errors_joined['errorcode'])]
+    # %%
+    errors_joined['sum_errors'] = errors_joined['count_x'] +\
+        errors_joined['count_y']
+    sum_threshold = 50
+    errors_joined = errors_joined[errors_joined['sum_errors'] > sum_threshold]
+    errors_joined = errors_joined.sort_values(by='count_x',
+                                            ascending=False)
 
-all_errors.sort_values(by='count', inplace=True)
+    all_errors = all_errors[all_errors['errorcode'].isin(
+        errors_joined['errorcode'])]
 
-sns.barplot(x='errorcode', y='count', 
-            hue='dataset', data=all_errors)
-plt.show()
+
+    all_errors.sort_values(by='count', 
+                        ascending=True,
+                        inplace=True)
+    return all_errors, errors_joined
+
+def plot_errors(error_df, figsize=None,
+                font_scale=1.5, label_length=40):
+    if figsize is None:
+        figsize = (10, 8)
+
+    all_errors, errors_joined = get_joined_errors(error_df)
+
+    fig = plt.figure(figsize=figsize)
+    sns.set(font_scale=font_scale)
+    labels = [flake8_error_messages[i][:label_length] for i in errors_joined['errorcode']]
+    bp = sns.barplot(y='errorcode', x='count', 
+                hue='dataset', data=all_errors,
+                orient='h', order=errors_joined['errorcode'],
+                hue_order = ['github', 'gpt4'])
+    bp.set_yticks(range(len(labels)), labels=labels)
+    ax = plt.gca()
+    ax.invert_xaxis()
+    plt.tick_params(axis = 'y', left = False, 
+                    right = True, labelleft = False, 
+                    labelright = True)
+    plt.ylabel('Warning/error codes')
+    plt.tight_layout()
+    return fig
+
+if __name__ == "__main__":
+
+    basedir = Path('/home/poldrack/Dropbox/code/talks-AIAssistedCoding')
+    error_df = get_error_df(basedir)
+    fig = plot_errors(error_df)
+    fig.savefig('/home/poldrack/Dropbox/Documents/Presentations/talks-AIAssistedCoding/talk/images/flake8_errors.png', dpi=300, bbox_inches='tight')
+
