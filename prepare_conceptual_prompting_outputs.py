@@ -30,8 +30,7 @@ def check_backticks(code):
     return bt_counter
 
 
-def save_rawfiles(data: dict, outdir: Path):
-    rawdir = outdir / 'raw'
+def save_rawfiles(data: dict, rawdir: Path):
     rawdir.mkdir(parents=True, exist_ok=True)
 
     for i, d in enumerate(data):
@@ -74,12 +73,15 @@ if __name__ == '__main__':
 
     # this is turned off because the raw files are already saved
     # several had to be manually edited to fix backtick issues
+    rawdir = Path('data/conceptual_prompting/raw')
+    rawdir.mkdir(parents=True, exist_ok=True)
     save_raw = False
     if save_raw:
-        save_rawfiles(data, outdir)
+        save_rawfiles(data, rawdir)
+    else:
+        print('using existing raw files (which were manually edited)')
 
 
-    rawdir = outdir / 'raw'
     rawfiles = sorted(rawdir.glob('*.txt'))
 
     code = {}
