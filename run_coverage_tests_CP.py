@@ -40,7 +40,7 @@ if __name__ == "__main__":
         coverage = {}
         for d in dirs:
             print(d.as_posix())
-            result = run_cmd(f'coverage run -m pytest {d.as_posix()}')
+            result = run_cmd(f'MPLBACKEND=Agg coverage run -m pytest {d.as_posix()}')
             if len(result[1]) > 0:
                 print(result[1])
             coverage[d.as_posix()] = run_cmd('coverage report')
