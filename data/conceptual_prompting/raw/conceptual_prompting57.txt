@@ -22,23 +22,6 @@ def ecological_footprint(consumption_rates, biocapacity):
     return ecological_footprint
 ```
 
-Here's an example of how you might use the function:
-
-```python
-consumption_rates_example = {
-    'cropland': 0.8,
-    'grazing_land': 0.4,
-    'forest_land': 0.6,
-    'fishing_ground': 0.3,
-    'built_up_land': 0.4,
-    'carbon': 1.5
-}
-
-biocapacity_example = 1.8
-
-result = ecological_footprint(consumption_rates_example, biocapacity_example)
-print(result)  # Output: 1.2
-```
 
 Next, here's a set of pytest tests that exercise the `ecological_footprint` function:
 

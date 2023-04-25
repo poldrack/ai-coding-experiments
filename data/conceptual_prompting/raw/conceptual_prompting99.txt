@@ -80,8 +80,8 @@ def classifier():
     return NaiveBayesClassifier()
 
 def test_tokenize(classifier):
-    tokenized_sample = classifier._tokenize(["I love movies.
-    "])
+    tokenized_sample = classifier._tokenize(["""I love movies.
+    """])
     assert tokenized_sample.shape[0] == 1, "Tokenize should have 1 row"
 
 def test_calculate_prior(classifier):
