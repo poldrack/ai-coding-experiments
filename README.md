@@ -64,12 +64,25 @@ Prompt 1:
 
 - first analysis used the following prompt: "please recode the following Python code.  Please return the code within an explicit code cell."
 - files used for analysis saved in github_code_for_recoding_prompt1.tgz and github_code_for_recoding_info_prompt1.json
+- these resulted in some files that were difficult to extract code from, leading to use of Prompt 2
 
-Prompt 2:
+Prompt 2 (analyses included in preprint):
 - second analysis used the following prompt: "Please refactor the following Python code to be more readable, adding or rewriting comments as needed. Please embed the code within an explicit code block, surrounded by triple-backtick markers."
 
 
 ### Coding prompts
 
 - Please generate 20 prompts to ask a chatbot to create Python code to solve a variety of {statistical and data science, physics, theoretical computer science, ecology, economics} problems.  Please embed the code within an explicit code block, surrounded by triple-backtick markers.
-- 
+
+- Resulting prompts (after additional prepartion with `prepare_code_prompts.py`) are in `data/conceptual_prompting/coding_prompts_clean_v2.txt`
+
+These were submitted to the GPT-4 API.  The resulting output is found in `data/conceptual_prompting/outputs_of_ConceptualPromptingV2Split.json`.  
+- These outputs were split into individual files using `prepare_conceptual_prompting_outputs.py`, and the results were stored in `data/conceptual_prompting/code`
+- These files were further organized into individual testing directories by `prepare_conceptual_prompting_outputs.py`, with the outputs stored into `data/conceptual_prompting/testdirs`.  
+
+## Testing analysis
+
+- Test coverage was estimated using `run_coverage_tests_CP.py`, with outputs stored to `results/conceptual_prompting/code_coverage.csv`
+- Execution was tested using `run_execution_tests_CP.py`, with output printed to screen
+- Pytest tests were executed using `run_pytest_tests_CP.py`, with outputs stored to `results/conceptual_prompting/code_coverage.csv` (note that this assumes that coverage was already run).
+
