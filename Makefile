@@ -1,4 +1,4 @@
-all: clean github gpt4 ghanalysis cp
+all: clean github gpt4 ghanalysis cp paper
 
 clean:
 	-rm -rf data/github/code 
@@ -30,3 +30,6 @@ cp:
 	python run_coverage_tests_CP.py
 	python run_execution_tests_CP.py
 	python run_pytest_tests_CP.py
+
+paper:
+	cd preprint; quarto render AI_assisted_coding.qmd
