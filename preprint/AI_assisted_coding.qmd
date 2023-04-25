@@ -114,9 +114,9 @@ The 274 code files passing these criteria were submitted to further analysis. An
 The number of warning and error messages emitted by the flake8 linter was substantially reduced for the refactored code compared to the original (median 0.23 messages/line for original vs 0.09 messages/line for refactored, Cohen's d = 0.50; see @fig-messages-plot).  While tools exist to perform automatic reformatting to ensure standard-compliance, this shows that GPT-4 generates code that is substantially more standards-compliant than the average programmer; given that the files sampled from Github were heavily filtered, this result is probably an underestimate compared to the broader population of Python code on Github.  @fig-errors-plot provides an overview of which errors were most common in the original code and how their prevalence changed after refactoring.
 
 
-![Number of Flake8 messages (per line of code) for original github files and refactored files.](../images/flake8_messages_per_loc_swarmplot.png){#fig-messages-plot width=60%}
+![Number of Flake8 messages (per line of code) for original github files and refactored files.](images/flake8_messages_per_loc_swarmplot.png){#fig-messages-plot width=60%}
 
-![Prevalence of individual Flake8 warning/error codes for original github files and refactored files. Values are sorted by prevalence in the original github files.](../images/flake8_errors.png){#fig-errors-plot}
+![Prevalence of individual Flake8 warning/error codes for original github files and refactored files. Values are sorted by prevalence in the original github files.](images/flake8_errors.png){#fig-errors-plot}
 
 
 We further examined a set of code quality metrics, which were computed using the `radon` Python package.  Metrics extracted from these outputs for further analysis included:
@@ -132,17 +132,17 @@ Comparisons between metrics for the original and refactored code are shown in @f
 
 
 ::: {#fig-metrics layout-nrow=3}
-![Logical lines of code](../images/raw_lloc_swarmplot.png){#fig-lloc}
+![Logical lines of code](images/raw_lloc_swarmplot.png){#fig-lloc}
 
-![Comments](../images/raw_comments_swarmplot.png){#fig-comments}
+![Comments](images/raw_comments_swarmplot.png){#fig-comments}
 
-![Mean cyclomatic complexity](../images/mean_cc_swarmplot.png){#fig-cc}
+![Mean cyclomatic complexity](images/mean_cc_swarmplot.png){#fig-cc}
 
-![Halstead bugs](../images/hal_bugs_swarmplot.png){#fig-bugs}
+![Halstead bugs](images/hal_bugs_swarmplot.png){#fig-bugs}
 
-![Halstead difficulty](../images/hal_difficulty_swarmplot.png){#fig-diff}
+![Halstead difficulty](images/hal_difficulty_swarmplot.png){#fig-diff}
 
-![Maintainability index](../images/mi_mi_swarmplot.png){#fig-mi}
+![Maintainability index](images/mi_mi_swarmplot.png){#fig-mi}
 
 Code quality metrics computed for each original file and its refactored version.
 :::

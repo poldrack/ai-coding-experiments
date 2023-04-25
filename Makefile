@@ -32,4 +32,4 @@ cp:
 	python run_pytest_tests_CP.py
 
 paper:
-	cd preprint; quarto render AI_assisted_coding.qmd
+	cd preprint; cp -r ../images .; quarto render AI_assisted_coding.qmd
