@@ -7,9 +7,9 @@ import pandas as pd
 
 
 # Replace with your email address, Google API Key, and Custom Search Engine ID
-Entrez.email = "poldrack@gmail.com"
-google_api_key = "AIzaSyAd-mQUnnIIo4OVrdHxxDK8j0RailU_is4 "
-custom_search_engine_id = "004510775836932767664:3ztsjy3uuba"
+Entrez.email = None
+google_api_key = None
+custom_search_engine_id = None
 
 def get_pubmed_doi(record):
     doi = None
