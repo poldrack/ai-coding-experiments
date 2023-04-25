@@ -1,5 +1,18 @@
-## Code analysis
+## Analysis of AI-assisted coding using GPT-4
 
+This reposistory includes code to reproduce all analyses used in the preprint:
+
+Poldrack RA, Lu T, Begu\v{s} G (2023).  AI-assisted coding: Experiments with GPT-4. 
+
+The entire workflow can be reproduced with the following commands (on a Mac or Linux system):
+
+- Install (Conda)[https://conda.io/projects/conda/en/latest/user-guide/getting-started.html]
+- Create a fresh conda environment using python 3.11: `conda create -n aicoding python=3.11`
+- Activate the environment: `conda activate aicoding`
+- Clone the repository: `git clone https://github.com/poldrack/ai-coding-experiments.git`
+- Cd into the directory: `cd ai-coding-experiments`
+- Install the requirements: `pip install -r requirements.txt`
+- Run the entire workflow: `make all`
 
 
 ### Step 0: download code from github
